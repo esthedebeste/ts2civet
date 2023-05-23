@@ -1,0 +1,60 @@
+meow from meow
+{ transforms, transform } from ./transform.civet
+{ readFileSync, writeFileSync } from node:fs
+
+
+cli := meow """
+    Usage
+      $ ts2civet [input]
+
+    Options
+      --help            Show this help message
+      --version         Show version
+      --input, -i       Input file, defaults to stdin
+      --output, -o      Output file, defaults to input file with .civet extension.
+      --transform, -t   Transform to apply, can be used multiple times. Defaults to all transforms.
+
+    Transforms:
+      + decl .......... Convert `const x = 3` to `x := 3` and `let x = 3` to `x .= 3`
+      + import ........ Convert `import { x } from "./y.ts"` to `{ x } from ./y.civet`
+
+    Examples
+      $ ts2civet src/index.ts -t decl -t import
+       > Transpiled to src/index.civet
+""",
+    importMeta: import.meta,
+    flags:
+        help:
+            type: "boolean"
+            default: false
+        version:
+            type: "boolean"
+            default: false
+        input:
+            type: "string"
+            shortFlag: "i"
+        output:
+            type: "string"
+            shortFlag: "o"
+            default: ""
+            isRequired: false
+        transform:
+            type: "string"
+            shortFlag: "t"
+            choices: [...transforms.keys()]
+            default: [...transforms.keys()]
+            isMultiple: true
+            isRequired: false
+
+export type Options = typeof cli.flags
+
+if cli.flags.help then cli.showHelp()
+if cli.flags.version then cli.showVersion()
+
+for input of cli.input
+    out := cli.flags.output or input.replace /\.\w+?$/, ".civet"
+    source := readFileSync input, "utf8"
+    transformed := transform source, input, cli.flags
+
+    writeFileSync out, transformed
+    console.log `Transformed ${input} to ${out}`

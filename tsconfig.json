@@ -1,0 +1,16 @@
+{
+	"compilerOptions": {
+		"target": "esnext",
+		"module": "node16",
+		"moduleResolution": "node16",
+		"noEmit": true, // when we add API: `"emitDeclarationOnly": true`
+		"forceConsistentCasingInFileNames": true,
+		"strict": true,
+		"skipLibCheck": true,
+		"allowJs": true,
+		"checkJs": true,
+		"jsx": "preserve",
+		"esModuleInterop": false,
+		"allowSyntheticDefaultImports": false
+	}
+}

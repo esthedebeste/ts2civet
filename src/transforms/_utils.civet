@@ -1,0 +1,8 @@
+type { Node, Pode, Code } from ../transform.civet
+
+NEXT_NON_WS_REGEX := /\s*/y
+
+export function nextNonWsIndex(code: string, start: number): number
+    NEXT_NON_WS_REGEX.lastIndex = start
+    match := NEXT_NON_WS_REGEX.exec(code)
+    if match? then NEXT_NON_WS_REGEX.lastIndex else code.length

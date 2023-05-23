@@ -1,0 +1,46 @@
+type { Node, Pode, Code } from ../transform.civet
+{ nextNonWsIndex } from ./_utils.civet
+
+implicitReturn := Symbol "implicitReturn"
+coffeeJSX := Symbol "coffeeJSX"
+type ExtC = Code & { [implicitReturn]?: boolean, [coffeeJSX]?: boolean }
+
+/** https://civet.dev/comparison/ */
+export function requiredTransform(node: Node, parent: Pode, code: Code): void
+    // Civet's labels are `:label` instead of `label:`, `label:` is reserved for implicit object literals
+    if node.type is "LabeledStatement"
+        { label, body } := node
+        code.overwrite label.range[0], body.range[0], `:${label.name} `
+
+    // Civet's arrow functions require parentheses around the parameter list. `a => a * 2` compiles to an implicit call; `a(() => a*2)`
+    if node.type is "ArrowFunctionExpression" and node.params.length is 1
+        param := node.params[0]
+        [start, end] := param.range
+        endBracket := nextNonWsIndex code.original, end // in case there's a `( param )` code style? who knows.
+        if code.original[endBracket] is not ")"
+            code.prependLeft start, "("
+            code.appendRight end, ")"
+
+    // Civet uses @ as shorthand for this, static, and constructor. Decorators need to be written with @@.
+    if node.type is "Decorator"
+        code.prependLeft node.range[0], "@"
+        // TODO: Decorators cannot be on the same line as their target.
+
+    if !(code as ExtC)[implicitReturn] and node.type is in ["FunctionDeclaration", "FunctionExpression", "ArrowFunctionExpression"]
+        code.prependLeft 0, '"civet -implicitReturns"\n'
+        (code as ExtC)[implicitReturn] = true
+
+    // TODO: meaningful whitespace
+    /*
+        if (condition)
+            console.log("condition holds")
+            console.log("condition still holds")
+        Acts differently in Civet. Is expected to be very rare in JS/TS code though.
+    */
+    if !(code as ExtC)[coffeeJSX] and node.type.startsWith "JSX"
+        code.prependLeft 0, '"civet coffeeJSX"\n'
+        (code as ExtC)[coffeeJSX] = true
+
+    // TODO: Automatic Semicolon Insertion is different in civet. I don't believe this will break much code, so I'm not going to worry about it for now.
+
+    // TODO: legacy typescript `<string>"hi"` syntax (instead of `"hi" as string`)
