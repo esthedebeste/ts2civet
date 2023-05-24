@@ -6,3 +6,22 @@ export function nextNonWsIndex(code: string, start: number): number
     NEXT_NON_WS_REGEX.lastIndex = start
     match := NEXT_NON_WS_REGEX.exec(code)
     if match? then NEXT_NON_WS_REGEX.lastIndex else code.length
+
+export function isEol(str: string, index: number): number
+    oi := index
+    while index < str.length
+        switch str[index]
+            when "\n", "\r"
+                return index - oi + 1
+            when " "
+                index++
+            when "/"
+                if str[index + 1] == "/"
+                    // no +1 because we want to keep the (hopefully) space before the //, looks better.
+                    return index - oi
+                else return 0
+            else return 0
+    index - oi + 1
+
+export function eqIgnoreWs(a: string, b: string): boolean
+    a.replace(/\s/g, "") is b.replace(/\s/g, "")

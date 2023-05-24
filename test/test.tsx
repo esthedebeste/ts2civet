@@ -26,3 +26,23 @@ class Civet {
 }
 
 const jsx = <div>hello</div> // don't transform, but trigger "civet coffeeJSX" flag
+
+ // transform object literals to remove braces and commas before newlines
+const braceless = {
+	foo: "bar",
+	$: "foo",     
+	thingy: "thingy",    // trailing comment. $: also has trailing whitespace fyi.
+	"hi": 2,
+}
+
+const keepBracesAndFancify = {
+	hey,
+	method() {
+		return "hello"
+	},
+	name: person.name,
+	x: obj?.c?.x,
+	foo: foo(),
+	[ x + y ]: lookup[x + y],
+	flagT: true, flagF: false,
+}

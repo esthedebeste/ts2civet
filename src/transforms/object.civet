@@ -1,0 +1,52 @@
+type { Node, Pode, Code } from ../transform.civet
+type { TSESTree } from @typescript-eslint/typescript-estree
+{ isEol, operator eqIgnoreWs } from ./_utils.civet
+
+function shouldUnbrace(node: TSESTree.ObjectExpression): boolean
+    if node.properties.length is 0
+        return false // unbraced empty is just whitespace
+
+    // a property can be made fancy, keep it braced so we can do that
+    !node.properties.some (property) =>
+        property.type is not "Property" // unbraced only supports properties
+        or property.method // prefer `{ x() {} }` over `x: () -> {}`
+        or property.shorthand // prefer `{ x }` over `x: x`
+
+function expressionName(node: Node): [number, number] | null
+    switch node.type
+        when "CallExpression" then return expressionName node.callee
+        when "MemberExpression" then return node.property.range
+        when "ChainExpression" then return expressionName node.expression
+        when "Identifier" then return node.range
+        else null
+
+export function object(node: Node, parent: Pode, code: Code): void
+    return if node.type is not "ObjectExpression"
+    // remove commas before newlines
+    for property of node.properties
+        continue if code.original[property.range[1]] is not ","
+        n := isEol code.original, property.range[1]+1
+        code.remove property.range[1], property.range[1] + n
+
+    if shouldUnbrace node
+        code.remove node.range[0], node.range[0] + 1
+        code.remove node.range[1] - 1, node.range[1]
+        return
+
+    for property of node.properties
+        switch property.type
+            when "Property":
+                // x: true -> +x and x: false -> -x
+                if property.value.type is "Literal" and property.value.value <? "boolean"
+                    code.remove property.key.range[1], property.value.range[1]
+                    code.appendLeft property.key.range[0], if property.value.value then "+" else "-"
+
+                // x: thing.x -> thing.x
+                exprNameRange := expressionName property.value
+                // TODO: do a proper recursive equality check instead of eqIgnoreWs,
+                // this has a `"a thing": hi.athing` -> `hi.athing` -> `athing: hi.athing` problem.
+                // Implemented like this for `[x + y]: lookup[x+y]` -> `lookup[x+y]`
+                if exprNameRange? and code.original[exprNameRange[0]...exprNameRange[1]] eqIgnoreWs code.original[property.key.range[0]...property.key.range[1]]
+                    code.remove property.range[0], property.value.range[0]
+
+
