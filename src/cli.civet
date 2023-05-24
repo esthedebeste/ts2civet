@@ -10,8 +10,7 @@ cli := meow """
     Options
       --help            Show this help message
       --version         Show version
-      --input, -i       Input file, defaults to stdin
-      --output, -o      Output file, defaults to input file with .civet extension.
+      --output, -o      Output file. '-' for stdout, '.' to replace the extension with .civet (default)
       --transform, -t   Transform to apply, can be used multiple times. Defaults to all transforms.
 
     Transforms:
@@ -20,7 +19,18 @@ cli := meow """
 
     Examples
       $ ts2civet src/index.ts -t decl -t import
-       > Transpiled to src/index.civet
+       > Transformed src/index.ts to src/index.civet
+
+      $ ts2civet src/index.ts -o.
+       > Transformed src/index.ts to src/index.civet
+
+      $ ts2civet src/index.ts -o-
+       > console.log "Hello, world!"
+
+      $ ts2civet src/a.ts -o src/civety-a.civet src/b.ts -o. src/import.ts -o-
+       > Transformed src/a.ts to src/civety-a.civet
+       > Transformed src/b.ts to src/b.civet
+       > console.log "Hello, world!"
 """,
     importMeta: import.meta,
     flags:
@@ -30,13 +40,11 @@ cli := meow """
         version:
             type: "boolean"
             default: false
-        input:
-            type: "string"
-            shortFlag: "i"
         output:
             type: "string"
             shortFlag: "o"
-            default: ""
+            default: []
+            isMultiple: true
             isRequired: false
         transform:
             type: "string"
@@ -51,10 +59,21 @@ export type Options = typeof cli.flags
 if cli.flags.help then cli.showHelp()
 if cli.flags.version then cli.showVersion()
 
-for input of cli.input
-    out := cli.flags.output or input.replace /\.\w+?$/, ".civet"
+if cli.flags.output.length is not 0 and cli.flags.output.length is not cli.input.length
+    console.error "Number of output files must match number of input files, or be omitted."
+    cli.showHelp()
+
+for [i, input] of cli.input.entries()
+    out :=
+      if cli.flags.output.length is 0 or cli.flags.output[i] is "."
+        input.replace /\.\w+?$/, ".civet"
+      else
+        cli.flags.output[i]
     source := readFileSync input, "utf8"
     transformed := transform source, input, cli.flags
+    if out is "-"
+      console.log transformed
+    else
+      writeFileSync out, transformed
+      console.log `Transformed ${input} to ${out}`
 
-    writeFileSync out, transformed
-    console.log `Transformed ${input} to ${out}`
