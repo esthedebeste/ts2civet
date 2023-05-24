@@ -1,4 +1,4 @@
-type { Node, Pode, Code } from ../transform.civet
+type { Node, Pode, Code } from ./_utils.civet
 type { TSESTree } from @typescript-eslint/typescript-estree
 { isEol, operator eqIgnoreWs } from ./_utils.civet
 

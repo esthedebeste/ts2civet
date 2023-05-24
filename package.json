@@ -6,9 +6,12 @@
 	"bin": {
 		"ts2civet": "dist/cli.js"
 	},
+	"exports": {
+		"import": "./dist/transform.js"
+	},
 	"scripts": {
 		"start": "pnpm build && node ./dist/cli.js",
-		"build": "node ./esbuild.js"
+		"build": "node ./esbuild.js && tsc"
 	},
 	"keywords": [
 		"typescript",

@@ -1,4 +1,4 @@
-type { Node, Pode, Code } from ../transform.civet
+type { Node, Pode, Code } from ./_utils.civet
 
 export function decl(node: Node, parent: Pode, code: Code): void
     if node.type is "VariableDeclaration" and node.kind is in ["const", "let"] and node.declarations.every .init

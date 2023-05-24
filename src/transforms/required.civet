@@ -1,4 +1,4 @@
-type { Node, Pode, Code } from ../transform.civet
+type { Node, Pode, Code } from ./_utils.civet
 { nextNonWsIndex } from ./_utils.civet
 
 implicitReturn := Symbol "implicitReturn"

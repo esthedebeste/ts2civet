@@ -12,17 +12,11 @@ export transforms := new Map [
     ["object", object]
 ]
 
-export type Node = ts.TSESTree.Node // current node
-export type Pode = ts.TSESTree.Node | undefined // parent node
-export type Code = MagicString // code
-
-export type Transform = (node: Node, pode: Pode, code: Code) => void
-
 export function transform(
   tscode: string
   path: string
   options: Options
-)
+): string
     parsed .= ts.parse tscode,
         filePath: path,
         range: true

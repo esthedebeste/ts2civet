@@ -1,4 +1,10 @@
-type { Node, Pode, Code } from ../transform.civet
+MagicString from magic-string
+{ type TSESTree } from @typescript-eslint/typescript-estree
+export type Node = TSESTree.Node // current node
+export type Pode = TSESTree.Node | undefined // parent node
+export type Code = MagicString // code
+
+export type Transform = (node: Node, pode: Pode, code: Code) => void
 
 NEXT_NON_WS_REGEX := /\s*/y
 
