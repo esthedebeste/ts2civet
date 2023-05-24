@@ -9,9 +9,10 @@
 	"exports": {
 		"import": "./dist/transform.js"
 	},
+	"types": "./dist/transform.d.ts",
 	"scripts": {
-		"start": "pnpm build && node ./dist/cli.js",
-		"build": "node ./esbuild.js && tsc"
+		"start": "civet ./build.civet --dev && node ./dist/cli.js",
+		"build": "civet ./build.civet"
 	},
 	"keywords": [
 		"typescript",
@@ -28,8 +29,11 @@
 	"devDependencies": {
 		"@danielx/civet": "^0.6.2",
 		"@types/node": "^20.2.3",
-		"esbuild": "^0.17.19"
+		"glob": "^10.2.6"
 	},
+	"files": [
+		"dist"
+	],
 	"type": "module",
 	"pnpm": {
 		"patchedDependencies": {

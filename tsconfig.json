@@ -3,7 +3,7 @@
 		"target": "esnext",
 		"module": "node16",
 		"moduleResolution": "node16",
-		"noEmit": true, // when we add API: `"emitDeclarationOnly": true`
+		"declaration": true,
 		"forceConsistentCasingInFileNames": true,
 		"strict": true,
 		"skipLibCheck": true,
@@ -11,6 +11,10 @@
 		"checkJs": true,
 		"jsx": "preserve",
 		"esModuleInterop": false,
-		"allowSyntheticDefaultImports": false
-	}
+		"allowSyntheticDefaultImports": false,
+		"rootDir": "./dist/ts",
+		"outDir": "./dist"
+	},
+	"include": ["./dist/ts/**/*.ts"],
+	"exclude": ["./dist/**/*.js"]
 }
