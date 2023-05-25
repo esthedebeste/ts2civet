@@ -6,13 +6,16 @@
 	"bin": {
 		"ts2civet": "dist/cli.js"
 	},
+	"repository": "gh:esthedebeste/ts2civet",
 	"exports": {
 		"import": "./dist/transform.js"
 	},
 	"types": "./dist/transform.d.ts",
 	"scripts": {
-		"start": "civet ./build.civet --dev && node ./dist/cli.js",
-		"build": "civet ./build.civet"
+		"prestart": "civet ./build.civet --dev",
+		"build": "civet ./build.civet",
+		"prepare": "civet ./build.civet",
+		"start": "node ./dist/cli.js"
 	},
 	"keywords": [
 		"typescript",
@@ -29,7 +32,8 @@
 	"devDependencies": {
 		"@danielx/civet": "^0.6.2",
 		"@types/node": "^20.2.3",
-		"glob": "^10.2.6"
+		"glob": "^10.2.6",
+		"prettier": "^2.8.8"
 	},
 	"files": [
 		"dist"

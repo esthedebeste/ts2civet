@@ -9,6 +9,8 @@ files := await glob "./src/**/*.civet"
 dev := process.argv.includes "--dev" // dev build
 longest := Math.max ...files.map .length
 
+unless dev then await rm "./dist", recursive: true
+
 await.all files.map async (file) =>
 	rel := relative "src", file
 	dest := join(if dev then "./dist" else "./dist/ts/", rel).replace /\.civet$/, if dev then ".js" else ".ts"
@@ -37,3 +39,7 @@ unless dev
 	if tsc.status is not 0 then throw new Error `tsc failed with status ${tsc.status}`
 	console.log `Compiled w/ tsc, status: ${tsc.status}`
 	await rm "./dist/ts",  recursive: true
+	spawnSync "pnpm prettier -w ./dist/**",
+		cwd: "."
+		shell: true
+		stdio: "inherit"
