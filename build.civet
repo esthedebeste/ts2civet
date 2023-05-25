@@ -15,11 +15,12 @@ await.all files.map async (file) =>
 	rel := relative "src", file
 	dest := join(if dev then "./dist" else "./dist/ts/", rel).replace /\.civet$/, if dev then ".js" else ".ts"
 	if dev // on full build, just compile everything. on dev build, only compile if changed.
-		srcStat := await stat file
-		destStat := await stat dest
-		if destStat.mtimeMs > srcStat.mtimeMs
-			console.log `Skipping ${file}${" ".repeat(longest - file.length)}  (${destStat.mtime.toLocaleTimeString()} > ${srcStat.mtime.toLocaleTimeString()})`
-			return // skip if dest is newer than src
+		try // if dest doesn't exist, stat will throw
+			srcStat := await stat file
+			destStat := await stat dest
+			if destStat.mtimeMs > srcStat.mtimeMs
+				console.log `Skipping ${file}${" ".repeat(longest - file.length)}  (${destStat.mtime.toLocaleTimeString()} > ${srcStat.mtime.toLocaleTimeString()})`
+				return // skip if dest is newer than src
 	src := await readFile file, "utf8"
 	ts := civet
 		.compile src, filename: file, js: dev

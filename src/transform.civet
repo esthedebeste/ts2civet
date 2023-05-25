@@ -1,3 +1,4 @@
+{ call } from ./transforms/call.civet
 { decl } from ./transforms/decl.civet
 { importTransform } from ./transforms/import.civet
 { object } from ./transforms/object.civet
@@ -9,6 +10,7 @@ export transforms := new Map [
     ["decl", decl]
     ["import", importTransform]
     ["object", object]
+    ["call", call]
 ] as const
 
 export type Transform = Parameters<typeof transforms["get"]>[0]

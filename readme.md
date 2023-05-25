@@ -30,7 +30,7 @@ $ ts2civet src/a.ts -o src/civety-a.civet src/b.ts -o. src/import.ts -o-
 
 ```ts
 import { transform } from "ts2civet"
-const code = transform("console.log('Hello, world!')", "./code.ts", {
+const code = transform('console.log("Hello, world!")', "./code.ts", {
 	transform: "all",
-})
+}) // console.log "Hello, world!"
 ```

@@ -12,10 +12,9 @@
 	},
 	"types": "./dist/transform.d.ts",
 	"scripts": {
-		"prestart": "civet ./build.civet --dev",
 		"build": "civet ./build.civet",
 		"prepare": "civet ./build.civet",
-		"start": "node ./dist/cli.js"
+		"start": "civet ./build.civet --dev && node ./dist/cli.js"
 	},
 	"keywords": [
 		"typescript",

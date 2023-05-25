@@ -1,0 +1,12 @@
+type { Node, Pode, Code } from ./_utils.civet
+
+export function call(node: Node, parent: Pode, code: Code): void
+    return if node.type is not "CallExpression" or node.arguments.length is 0
+    return if parent and (
+        parent.type is "CallExpression" and (parent.callee is node or parent.arguments.length is not 1)
+        or parent.type is "VariableDeclarator" and parent.init is node
+        or parent.type is not in ["ExpressionStatement", "ReturnStatement", "ArrowFunctionExpression", "AwaitExpression"]
+        // TODO: more cases
+    )
+    code.overwrite node.callee.range[1], node.arguments[0].range[0], " "
+    code.remove node.range[1] - 1, node.range[1]

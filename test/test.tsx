@@ -1,4 +1,5 @@
 // @ts-nocheck
+// TODO: proper testing ;p
 
 import { hello } from "./hello.ts"; // should be transformed
 
@@ -33,6 +34,9 @@ const braceless = {
 	$: "foo",     
 	thingy: "thingy",    // trailing comment. $: also has trailing whitespace fyi.
 	"hi": 2,
+	arrow: () => {
+		return "haii"
+	}
 }
 
 const keepBracesAndFancify = {
@@ -46,3 +50,8 @@ const keepBracesAndFancify = {
 	[ x + y ]: lookup[x + y],
 	flagT: true, flagF: false,
 }
+
+implicit(call(1), call(2, 3)) // transform to `implicit call(1), call(2, 3)`
+implicit(call(3))
+keepExplicit() // don't transform
+keepExplicit(call(4)).thingy // don't transform
