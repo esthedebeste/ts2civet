@@ -6,7 +6,7 @@
 	"bin": {
 		"ts2civet": "dist/cli.js"
 	},
-	"repository": "gh:esthedebeste/ts2civet",
+	"repository": "github:esthedebeste/ts2civet",
 	"exports": {
 		"import": "./dist/transform.js"
 	},
