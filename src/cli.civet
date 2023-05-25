@@ -1,7 +1,6 @@
 meow from meow
-{ transforms, transform } from ./transform.civet
+{ transforms, transform, type Options } from ./transform.civet
 { readFileSync, writeFileSync } from node:fs
-
 
 cli := meow """
     Usage
@@ -54,8 +53,6 @@ cli := meow """
             isMultiple: true
             isRequired: false
 
-export type Options = typeof cli.flags
-
 if cli.flags.help then cli.showHelp()
 if cli.flags.version then cli.showVersion()
 
@@ -70,7 +67,7 @@ for [i, input] of cli.input.entries()
       else
         cli.flags.output[i]
     source := readFileSync input, "utf8"
-    transformed := transform source, input, cli.flags
+    transformed := transform source, input, cli.flags as Options
     if out is "-"
       console.log transformed
     else
