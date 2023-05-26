@@ -11,10 +11,12 @@ npx ts2civet --help
 Examples:
 
 ```bash
-$ ts2civet src/index.ts -t decl -t import
-> Transformed src/index.ts to src/index.civet
+$ ts2civet src/**/*.ts
+> Transformed src/a.ts to src/a.civet
+> Transformed src/b.ts to src/b.civet
+> Transformed src/folder/file.ts to src/folder/file.civet
 
-$ ts2civet src/index.ts -o.
+$ ts2civet src/index.ts -t decl -t import
 > Transformed src/index.ts to src/index.civet
 
 $ ts2civet src/index.ts -o-

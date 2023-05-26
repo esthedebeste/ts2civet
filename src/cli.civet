@@ -1,6 +1,7 @@
 meow from meow
 { transforms, transform, type Options } from ./transform.civet
 { readFileSync, writeFileSync } from node:fs
+{ glob } from glob
 
 cli := meow """
     Usage
@@ -15,12 +16,16 @@ cli := meow """
     Transforms:
       + decl .......... Convert `const x = 3` to `x := 3` and `let x = 3` to `x .= 3`
       + import ........ Convert `import { x } from "./y.ts"` to `{ x } from ./y.civet`
+      + object ........ Convert explicit objects like `{ x: 3 }` to braceless objects: `x : 3`
+      + call .......... Convert explicit calls like `console.log("Hello World")` to implicit calls: `console.log "Hello World"`
 
     Examples
-      $ ts2civet src/index.ts -t decl -t import
-       > Transformed src/index.ts to src/index.civet
+      $ ts2civet src/**/*.ts
+       > Transformed src/a.ts to src/a.civet
+       > Transformed src/b.ts to src/b.civet
+       > Transformed src/folder/file.ts to src/folder/file.civet
 
-      $ ts2civet src/index.ts -o.
+      $ ts2civet src/index.ts -t decl -t import
        > Transformed src/index.ts to src/index.civet
 
       $ ts2civet src/index.ts -o-
@@ -55,6 +60,8 @@ cli := meow """
 
 if cli.flags.help then cli.showHelp()
 if cli.flags.version then cli.showVersion()
+
+cli.input = (await.all cli.input.map (pattern) -> glob pattern).flat()
 
 if cli.flags.output.length is not 0 and cli.flags.output.length is not cli.input.length
     console.error "Number of output files must match number of input files, or be omitted."
