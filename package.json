@@ -1,6 +1,6 @@
 {
 	"name": "ts2civet",
-	"version": "0.0.0",
+	"version": "0.1.0",
 	"description": "Converts typescript code to civet code",
 	"main": "dist/cli.js",
 	"bin": {
