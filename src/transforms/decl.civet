@@ -1,9 +1,0 @@
-type { Node, Pode, Code } from ./_utils.civet
-
-export function decl(node: Node, parent: Pode, code: Code): void
-    if node.type is "VariableDeclaration" and node.kind is in ["const", "let"] and node.declarations.every .init
-        for decl of node.declarations
-            id := decl.id
-            init := decl.init!
-            code.remove node.range[0], decl.range[0]
-            code.overwrite id.range[1], init.range[0], if node.kind is "const" then " := " else " .= "

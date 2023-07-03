@@ -1,0 +1,17 @@
+{ glob } from glob
+{ dirname } from node:path
+{ fileURLToPath } from node:url
+{ describe, it } from node:test
+{ setOptions } from ./_utils.civet
+
+files := await glob "./**/*.civet", cwd: dirname fileURLToPath import.meta.url
+ignored := ["_run.civet", "_utils.civet"]
+
+for file of files
+    unless file is in ignored
+        { tests, options } := await import file
+        describe file, =>
+            for name in tests
+                it name.replaceAll("_", " "), =>
+                    setOptions options
+                    await tests[name]()

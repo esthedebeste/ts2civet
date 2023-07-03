@@ -1,0 +1,30 @@
+{ operator becomes, operator contains, type Tests, type Options } from ./_utils.civet
+
+export options: Options := {}
+
+export tests: Tests :=
+    Labels: =>
+        "label: hello" becomes ":label hello"
+        "$: hello" becomes ":$ hello"
+
+    Arrow_Functions: =>
+        "a => a" contains "(a) => a"
+        "(a) => a" contains "(a) => a"
+        "a => { return a }" contains "(a) => { return a }"
+        "(a) => { return a }" contains "(a) => { return a }"
+
+    Decorators: =>
+        """
+        @Object.seal
+        class Civet {
+            @stuff
+            drink() {}
+        }
+        """ contains """
+        @@Object.seal
+        class Civet {
+            @@stuff
+            drink() {}
+        }
+        """
+

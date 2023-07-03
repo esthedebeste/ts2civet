@@ -1,0 +1,875 @@
+{ CodeBlockWriter, type Options } from code-block-writer
+{ SyntaxKind, idText, ModifierLike, Node, NodeArray, tokenToString, Identifier, QualifiedName, ComputedPropertyName, PrivateIdentifier, Decorator, TypeParameterDeclaration, SignatureDeclaration, CallSignatureDeclaration, ConstructSignatureDeclaration, VariableDeclaration, VariableDeclarationList, ParameterDeclaration, BindingElement, PropertySignature, PropertyDeclaration, PropertyAssignment, ShorthandPropertyAssignment, SpreadAssignment, ObjectBindingPattern, ArrayBindingPattern, FunctionLikeDeclaration, FunctionDeclaration, MethodSignature, MethodDeclaration, ConstructorDeclaration, SemicolonClassElement, GetAccessorDeclaration, SetAccessorDeclaration, IndexSignatureDeclaration, ClassStaticBlockDeclaration, ImportTypeAssertionContainer, ImportTypeNode, ThisTypeNode, FunctionOrConstructorTypeNodeBase, FunctionTypeNode, ConstructorTypeNode, TypeReferenceNode, TypePredicateNode, TypeQueryNode, TypeLiteralNode, ArrayTypeNode, TupleTypeNode, NamedTupleMember, OptionalTypeNode, RestTypeNode, UnionTypeNode, IntersectionTypeNode, ConditionalTypeNode, InferTypeNode, ParenthesizedTypeNode, TypeOperatorNode, IndexedAccessTypeNode, MappedTypeNode, LiteralTypeNode, StringLiteral, TemplateLiteralTypeNode, TemplateLiteralTypeSpan, OmittedExpression, PartiallyEmittedExpression, PrefixUnaryExpression, PostfixUnaryExpression, NullLiteral, TrueLiteral, FalseLiteral, ThisExpression, SuperExpression, ImportExpression, DeleteExpression, TypeOfExpression, VoidExpression, AwaitExpression, YieldExpression, SyntheticExpression, BinaryExpression, ConditionalExpression, FunctionExpression, ArrowFunction, RegularExpressionLiteral, NoSubstitutionTemplateLiteral, NumericLiteral, BigIntLiteral, TemplateHead, TemplateMiddle, TemplateTail, TemplateExpression, TemplateSpan, ParenthesizedExpression, ArrayLiteralExpression, SpreadElement, ObjectLiteralExpression, PropertyAccessExpression, ElementAccessExpression, CallExpression, ExpressionWithTypeArguments, NewExpression, TaggedTemplateExpression, AsExpression, TypeAssertion, SatisfiesExpression, NonNullExpression, MetaProperty, JsxElement, JsxNamespacedName, JsxOpeningElement, JsxSelfClosingElement, JsxFragment, JsxOpeningFragment, JsxClosingFragment, JsxAttribute, JsxSpreadAttribute, JsxClosingElement, JsxExpression, JsxText, NotEmittedStatement, CommaListExpression, EmptyStatement, DebuggerStatement, MissingDeclaration, Block, VariableStatement, ExpressionStatement, IfStatement, DoStatement, WhileStatement, ForStatement, ForInStatement, ForOfStatement, BreakStatement, ContinueStatement, ReturnStatement, WithStatement, SwitchStatement, CaseBlock, CaseClause, DefaultClause, LabeledStatement, ThrowStatement, TryStatement, CatchClause, ClassLikeDeclaration, ClassDeclaration, ClassExpression, InterfaceDeclaration, HeritageClause, TypeAliasDeclaration, EnumMember, EnumDeclaration, ModuleDeclaration, ModuleBlock, ImportEqualsDeclaration, ExternalModuleReference, ImportDeclaration, ImportClause, AssertEntry, AssertClause, NamespaceImport, NamespaceExport, NamespaceExportDeclaration, ExportDeclaration, NamedImports, NamedExports, ImportSpecifier, ExportSpecifier, ExportAssignment, JSDocTypeExpression, JSDocNameReference, JSDocMemberName, JSDocAllType, JSDocUnknownType, JSDocNonNullableType, JSDocNullableType, JSDocOptionalType, JSDocFunctionType, JSDocVariadicType, JSDocNamepathType, JSDoc, JSDocLink, JSDocLinkCode, JSDocLinkPlain, JSDocText, JSDocUnknownTag, JSDocAugmentsTag, JSDocImplementsTag, JSDocAuthorTag, JSDocDeprecatedTag, JSDocClassTag, JSDocPublicTag, JSDocPrivateTag, JSDocProtectedTag, JSDocReadonlyTag, JSDocOverrideTag, JSDocEnumTag, JSDocThisTag, JSDocTemplateTag, JSDocSeeTag, JSDocReturnTag, JSDocTypeTag, JSDocTypedefTag, JSDocCallbackTag, JSDocOverloadTag, JSDocThrowsTag, JSDocSignature, JSDocPropertyTag, JSDocParameterTag, JSDocTypeLiteral, JSDocSatisfiesTag, SourceFile, Bundle, InputFiles, UnparsedSource, UnparsedPrologue, UnparsedPrepend, UnparsedTextLike, UnparsedSyntheticReference, JsonMinusNumericLiteral, SyntaxList } from typescript
+{ StringLiteralType, stringLiteral } from ./utils.civet
+
+function TODO(node: { kind: SyntaxKind }): never
+    throw new Error `TODO: Unhandled node type: ${SyntaxKind[node.kind]}`
+
+function keyword(kind: SyntaxKind): string
+    str := tokenToString kind
+    if str?
+        return str
+    else
+        TODO { kind }
+
+function isMultiline(node: any)
+    Boolean(node.multiLine)
+
+export class Emitter < CodeBlockWriter
+    @(public ast: SourceFile)
+        super
+            useTabs: true
+            useSingleQuote: true
+
+    modifiers(modifiers: NodeArray<ModifierLike>): void
+        for modifier of modifiers
+            if modifier.kind is SyntaxKind.Decorator
+                @[SyntaxKind.Decorator] modifier
+            else
+                @write modifier.getText @ast
+                @write " "
+
+    node(node: Node): void
+        { kind } := node
+        if Object.hasOwn Emitter.prototype, kind
+            @[kind as Extract<keyof Emitter, SyntaxKind>] node as any
+        else
+            TODO node
+
+    [SyntaxKind.Identifier](node: Identifier): void
+        text := idText node
+        @write if text is "this" then "@" else text
+
+    [SyntaxKind.QualifiedName](node: QualifiedName): void
+        { left, right } := node
+        @node left
+        @write "."
+        @node right
+
+    [SyntaxKind.ComputedPropertyName](node: ComputedPropertyName): void
+        @write "["
+        @node node.expression
+        @write "]"
+
+    [SyntaxKind.PrivateIdentifier](node: PrivateIdentifier): void
+        @write idText node
+
+    [SyntaxKind.Decorator](node: Decorator): void
+        @write "@@" // `@@` cause civet uses `@` for `this`
+        @node node.expression
+
+    [SyntaxKind.TypeParameter](node: TypeParameterDeclaration): void
+        if node.modifiers?
+            @modifiers node.modifiers
+        @node node.name
+        if node.constraint?
+            @write " extends "
+            @node node.constraint
+        if node.default?
+            @write " = "
+            @node node.default
+
+    signatureDeclaration(node: SignatureDeclaration): void
+        if "modifiers" in node and node.modifiers?
+            @modifiers node.modifiers
+
+        if node.kind is SyntaxKind.ConstructorType
+            @write "new "
+        else if node.kind is SyntaxKind.FunctionType or node.kind is SyntaxKind.FunctionDeclaration or node.kind is SyntaxKind.FunctionExpression
+            @write "function "
+
+        if node.kind is SyntaxKind.ConstructorType
+            @write "@"
+        else if node.name?
+            @node node.name
+
+        if node.typeParameters?
+            @write "<"
+            for typeParameter of node.typeParameters
+                @node typeParameter
+                @write ", "
+            @write ">"
+
+        @write "("
+        for parameter of node.parameters
+            @node parameter
+            @write ", "
+        @write ")"
+
+        if node.type?
+            @write ": "
+            @node node.type
+
+    [SyntaxKind.CallSignature](node: CallSignatureDeclaration): void
+        @signatureDeclaration node
+
+    [SyntaxKind.ConstructSignature](node: ConstructSignatureDeclaration): void
+        @write "new "
+        @signatureDeclaration node
+
+    [SyntaxKind.VariableDeclaration](node: VariableDeclaration): void
+    [SyntaxKind.VariableDeclarationList](node: VariableDeclarationList): void
+
+    [SyntaxKind.Parameter](node: ParameterDeclaration): void
+        if node.modifiers?
+            @modifiers node.modifiers
+        if node.dotDotDotToken?
+            @write "..."
+        @node node.name
+        if node.questionToken?
+            @write "?"
+        if node.type?
+            @write ": "
+            @node node.type
+        if node.initializer?
+            @write " = "
+            @node node.initializer
+
+    [SyntaxKind.BindingElement](node: BindingElement): void
+        if node.dotDotDotToken?
+            @write "..."
+        @node node.name
+        if node.propertyName?
+            @write ": "
+            @node node.propertyName
+        if node.initializer?
+            @write " = "
+            @node node.initializer
+
+    [SyntaxKind.PropertySignature](node: PropertySignature): void
+        if node.modifiers?
+            @modifiers node.modifiers
+        @node node.name
+        if node.questionToken?
+            @write "?"
+        if node.type?
+            @write ": "
+            @node node.type
+
+    [SyntaxKind.PropertyDeclaration](node: PropertyDeclaration): void
+        if node.modifiers?
+            @modifiers node.modifiers
+        @node node.name
+        if node.questionToken?
+            @write "?"
+        if node.type?
+            @write ": "
+            @node node.type
+        if node.initializer?
+            @write " = "
+            @node node.initializer
+
+    [SyntaxKind.PropertyAssignment](node: PropertyAssignment): void
+
+    [SyntaxKind.ShorthandPropertyAssignment](node: ShorthandPropertyAssignment): void
+
+    [SyntaxKind.SpreadAssignment](node: SpreadAssignment): void
+
+    [SyntaxKind.ObjectBindingPattern](node: ObjectBindingPattern): void
+        @write "{"
+        for element of node.elements
+            @node element
+            @write ", "
+        @write "}"
+
+    [SyntaxKind.ArrayBindingPattern](node: ArrayBindingPattern): void
+        @write "["
+        for element of node.elements
+            @node element
+            @write ", " // TODO: multiline doesn't need commas
+        @write "]"
+
+    functionLikeDeclaration(node: FunctionLikeDeclaration): void
+        if node.modifiers?
+            @modifiers node.modifiers
+        if node.asteriskToken?
+            @write "*"
+
+        if node.kind is SyntaxKind.FunctionDeclaration or node.kind is SyntaxKind.FunctionExpression
+            @write "function "
+
+        if node.kind is SyntaxKind.Constructor
+            @write "@"
+        else if node.name?
+            @node node.name
+
+        if node.questionToken?
+            @write "?"
+        if node.typeParameters?
+            @write "<"
+            for typeParameter of node.typeParameters
+                @node typeParameter
+                @write ", "
+            @write ">"
+        if node.parameters.length > 0
+            @write "("
+            for parameter of node.parameters
+                @node parameter
+                @write ", "
+            @write ")"
+        if node.type?
+            @write ": "
+            @node node.type
+
+        if node.kind is SyntaxKind.ArrowFunction
+            @write " => "
+
+        if node.body?
+            @node node.body
+
+    [SyntaxKind.FunctionDeclaration](node: FunctionDeclaration): void
+        @functionLikeDeclaration node
+
+    [SyntaxKind.MethodSignature](node: MethodSignature): void
+        @signatureDeclaration node
+
+    [SyntaxKind.MethodDeclaration](node: MethodDeclaration): void
+        @functionLikeDeclaration node
+
+    [SyntaxKind.Constructor](node: ConstructorDeclaration): void
+        @functionLikeDeclaration node
+
+    [SyntaxKind.SemicolonClassElement](node: SemicolonClassElement): void
+        TODO node // ???
+
+    [SyntaxKind.GetAccessor](node: GetAccessorDeclaration): void
+        @write "get "
+        @functionLikeDeclaration node
+
+    [SyntaxKind.SetAccessor](node: SetAccessorDeclaration): void
+        @write "set "
+        @functionLikeDeclaration node
+
+    [SyntaxKind.IndexSignature](node: IndexSignatureDeclaration): void
+        throw new Error "unsure what IndexSignatureDeclaration is"
+
+    [SyntaxKind.ClassStaticBlockDeclaration](node: ClassStaticBlockDeclaration): void
+        @write "static "
+        @node node.body
+
+    [SyntaxKind.ImportTypeAssertionContainer](node: ImportTypeAssertionContainer): void
+        TODO node // ???
+
+    [SyntaxKind.ImportType](node: ImportTypeNode): void
+        if node.isTypeOf
+            @write "typeof "
+        @write "import("
+        @node node.argument
+        @write ")"
+
+
+    [SyntaxKind.ThisType](node: ThisTypeNode): void
+        @write "this" // ???
+
+    [SyntaxKind.FunctionType](node: FunctionTypeNode): void
+        @signatureDeclaration node
+
+    [SyntaxKind.ConstructorType](node: ConstructorTypeNode): void
+        @signatureDeclaration node
+
+    [SyntaxKind.TypeReference](node: TypeReferenceNode): void
+        @node node.typeName
+        if node.typeArguments?
+            @write "<"
+            for typeArgument of node.typeArguments
+                @node typeArgument
+                @write ", "
+            @write ">"
+
+    [SyntaxKind.TypePredicate](node: TypePredicateNode): void
+        if node.assertsModifier?
+            @write "asserts "
+        @node node.parameterName
+        if node.type?
+            @write " is "
+            @node node.type
+
+    [SyntaxKind.TypeQuery](node: TypeQueryNode): void
+        @write "typeof "
+        @node node.exprName
+
+    [SyntaxKind.TypeLiteral](node: TypeLiteralNode): void
+        @indent : void =>
+            for member of node.members
+                @node member
+                @writeLine ""
+
+    [SyntaxKind.ArrayType](node: ArrayTypeNode): void
+        @node node.elementType
+        @write "[]"
+
+    [SyntaxKind.TupleType](node: TupleTypeNode): void
+        @write "["
+        for element of node.elements
+            @node element
+            @write ", "
+        @write "]"
+
+    [SyntaxKind.NamedTupleMember](node: NamedTupleMember): void
+        if node.dotDotDotToken?
+            @write "..."
+        @node node.name
+        if node.questionToken?
+            @write "?"
+        @write ": "
+        @node node.type
+
+    [SyntaxKind.OptionalType](node: OptionalTypeNode): void
+        @node node.type
+        @write "?"
+
+    [SyntaxKind.RestType](node: RestTypeNode): void
+        @write "..."
+        @node node.type
+
+    [SyntaxKind.UnionType](node: UnionTypeNode): void
+        @node node.types[0]
+        for type of node.types[1..]
+            @write " | "
+            @node type
+
+    [SyntaxKind.IntersectionType](node: IntersectionTypeNode): void
+        @node node.types[0]
+        for type of node.types[1..]
+            @write " & "
+            @node type
+
+    [SyntaxKind.ConditionalType](node: ConditionalTypeNode): void
+        @node node.checkType
+        @write " extends "
+        @node node.extendsType
+        @write " ? "
+        @node node.trueType
+        @write " : "
+        @node node.falseType
+
+    [SyntaxKind.InferType](node: InferTypeNode): void
+        @write "infer "
+        @node node.typeParameter
+
+    [SyntaxKind.ParenthesizedType](node: ParenthesizedTypeNode): void
+        @write "("
+        @node node.type
+        @write ")"
+
+    [SyntaxKind.TypeOperator](node: TypeOperatorNode): void
+        @write keyword node.operator
+        @write " "
+        @node node.type
+
+    [SyntaxKind.IndexedAccessType](node: IndexedAccessTypeNode): void
+        @node node.objectType
+        @write "["
+        @node node.indexType
+        @write "]"
+
+    [SyntaxKind.MappedType](node: MappedTypeNode): void
+        if node.readonlyToken?
+            @write keyword node.readonlyToken.kind
+            @write " "
+        TODO node
+
+    [SyntaxKind.LiteralType](node: LiteralTypeNode): void
+        @node node.literal
+
+    [SyntaxKind.StringLiteral](node: StringLiteral): void
+        @quote node.text
+
+
+    [SyntaxKind.TemplateLiteralType](node: TemplateLiteralTypeNode): void
+        TODO node
+
+    [SyntaxKind.TemplateLiteralTypeSpan](node: TemplateLiteralTypeSpan): void
+        TODO node
+
+    [SyntaxKind.OmittedExpression](node: OmittedExpression): void
+        // the spaces in `[ , , , ]`
+        @write " "
+
+    [SyntaxKind.PartiallyEmittedExpression](node: PartiallyEmittedExpression): void
+        TODO node
+
+    [SyntaxKind.PrefixUnaryExpression](node: PrefixUnaryExpression): void
+        @write keyword node.operator
+        @node node.operand
+
+    [SyntaxKind.PostfixUnaryExpression](node: PostfixUnaryExpression): void
+        @node node.operand
+        @write keyword node.operator
+
+    [SyntaxKind.NullKeyword](node: NullLiteral): void
+        @write "null"
+
+    [SyntaxKind.TrueKeyword](node: TrueLiteral): void
+        @write "true"
+
+    [SyntaxKind.FalseKeyword](node: FalseLiteral): void
+        @write "false"
+
+    [SyntaxKind.ThisKeyword](node: ThisExpression): void
+        @write "@" // civet @ shorthand
+
+    [SyntaxKind.SuperKeyword](node: SuperExpression): void
+        @write "super"
+
+    [SyntaxKind.ImportKeyword](node: ImportExpression): void
+        @write "import"
+
+    [SyntaxKind.DeleteExpression](node: DeleteExpression): void
+        @write "delete "
+        @node node.expression
+
+    [SyntaxKind.TypeOfExpression](node: TypeOfExpression): void
+        @write "typeof "
+        @node node.expression
+
+    [SyntaxKind.VoidExpression](node: VoidExpression): void
+        @write "void "
+        @node node.expression
+
+    [SyntaxKind.AwaitExpression](node: AwaitExpression): void
+        @write "await " // TODO: `await.all`, `await.allSettled` for `Promise.*` methods
+        @node node.expression
+
+    [SyntaxKind.YieldExpression](node: YieldExpression): void
+        @write "yield "
+        if node.asteriskToken?
+            @write "*"
+        if node.expression?
+            @node node.expression
+
+    [SyntaxKind.SyntheticExpression](node: SyntheticExpression): void
+        TODO node
+
+    [SyntaxKind.BinaryExpression](node: BinaryExpression): void
+        @node node.left
+        @write " "
+        @write keyword node.operatorToken.kind
+        @write " "
+        @node node.right
+
+    [SyntaxKind.ConditionalExpression](node: ConditionalExpression): void
+        @write "if "
+        @node node.condition
+        @write " then "
+        @node node.whenTrue
+        @write " else "
+        @node node.whenFalse
+
+    [SyntaxKind.FunctionExpression](node: FunctionExpression): void
+        @signatureDeclaration node
+
+    [SyntaxKind.ArrowFunction](node: ArrowFunction): void
+        @signatureDeclaration node
+
+    [SyntaxKind.RegularExpressionLiteral](node: RegularExpressionLiteral): void
+        TODO node
+
+    [SyntaxKind.NoSubstitutionTemplateLiteral](node: NoSubstitutionTemplateLiteral): void
+        TODO node
+
+    [SyntaxKind.NumericLiteral](node: NumericLiteral): void
+        @write node.text
+
+    [SyntaxKind.BigIntLiteral](node: BigIntLiteral): void
+        @write node.text
+
+    [SyntaxKind.TemplateHead](node: TemplateHead): void
+        @write "`"
+        @write stringLiteral node.text, StringLiteralType.Template
+
+    [SyntaxKind.TemplateMiddle](node: TemplateMiddle): void
+        @write stringLiteral node.text, StringLiteralType.Template
+
+    [SyntaxKind.TemplateTail](node: TemplateTail): void
+        @write stringLiteral node.text, StringLiteralType.Template
+        @write "`"
+
+    [SyntaxKind.TemplateExpression](node: TemplateExpression): void
+        @node node.head
+        for span of node.templateSpans
+            @node span
+
+    [SyntaxKind.TemplateSpan](node: TemplateSpan): void
+        @write "${"
+        @node node.expression
+        @write "}"
+        @node node.literal
+
+    [SyntaxKind.ParenthesizedExpression](node: ParenthesizedExpression): void
+        // TODO: some unparenthesizing. in JS/TS `({ a, b } = obj)`, in civet `{ a, b } = obj`
+        @write "("
+        @node node.expression
+        @write ")"
+
+    [SyntaxKind.ArrayLiteralExpression](node: ArrayLiteralExpression): void
+        multiline := isMultiline node
+        if multiline
+            @writeLine "["
+            @indent : void =>
+                for element of node.elements
+                    @node element
+                    @writeLine ""
+            @write "]"
+        else
+            @write "["
+            for element of node.elements
+                @node element
+                @write ", "
+            @write "]"
+
+    [SyntaxKind.SpreadElement](node: SpreadElement): void
+        @write "..."
+        @node node.expression
+
+    [SyntaxKind.ObjectLiteralExpression](node: ObjectLiteralExpression): void
+        @write "{" // TODO: unbraced object literals
+        multiline := isMultiline node
+        if multiline
+            @indent : void =>
+                for property of node.properties
+                    @node property
+                    @writeLine ""
+        else
+            for property of node.properties
+                @node property
+                @write ", "
+        @write "}"
+
+    [SyntaxKind.PropertyAccessExpression](node: PropertyAccessExpression): void
+        @node node.expression
+        if node.questionDotToken?
+            @write "?"
+        @write "."
+        @node node.name
+
+    [SyntaxKind.ElementAccessExpression](node: ElementAccessExpression): void
+        @node node.expression
+        if node.questionDotToken?
+            @write "?"
+        @write "["
+        @node node.argumentExpression
+        @write "]"
+
+    [SyntaxKind.CallExpression](node: CallExpression): void
+        @node node.expression
+        if node.typeArguments?
+            @write "<"
+            for typeArgument of node.typeArguments
+                @node typeArgument
+                @write ", "
+            @write ">"
+
+        @write "("
+        for argument of node.arguments
+            @node argument
+            @write ", "
+        @write ")"
+
+    [SyntaxKind.ExpressionWithTypeArguments](node: ExpressionWithTypeArguments): void
+        @node node.expression
+        if node.typeArguments?
+            @write "<"
+            for typeArgument of node.typeArguments
+                @node typeArgument
+                @write ", "
+            @write ">"
+
+    [SyntaxKind.NewExpression](node: NewExpression): void
+        @write "new "
+        @node node.expression
+        if node.typeArguments?
+            @write "<"
+            for typeArgument of node.typeArguments
+                @node typeArgument
+                @write ", "
+            @write ">"
+        @write "("
+        if node.arguments?
+            for argument of node.arguments
+                @node argument
+                @write ", "
+        @write ")"
+
+    [SyntaxKind.TaggedTemplateExpression](node: TaggedTemplateExpression): void
+        @node node.tag
+        if node.typeArguments?
+            @write "<"
+            for typeArgument of node.typeArguments
+                @node typeArgument
+                @write ", "
+            @write ">"
+        @node node.template
+
+    [SyntaxKind.AsExpression](node: AsExpression): void
+        @node node.expression
+        @write " as "
+        @node node.type
+
+    [SyntaxKind.TypeAssertionExpression](node: TypeAssertion): void
+        throw new Error `Type assertions ('<number>123') are not supported in civet and get parsed as JSX instead. Use '123 as number' instead.`
+        @write "<"
+        @node node.type
+        @write ">"
+        @node node.expression
+
+    [SyntaxKind.SatisfiesExpression](node: SatisfiesExpression): void
+        @node node.expression
+        @write " satisfies "
+        @node node.type
+
+    [SyntaxKind.NonNullExpression](node: NonNullExpression): void
+        @node node.expression
+        @write "!"
+
+    [SyntaxKind.MetaProperty](node: MetaProperty): void // `new.target`, `import.meta`
+        @write keyword node.keywordToken
+        @write "."
+        @node node.name
+
+    [SyntaxKind.JsxElement](node: JsxElement): void TODO node
+    [SyntaxKind.JsxNamespacedName](node: JsxNamespacedName): void TODO node
+    [SyntaxKind.JsxOpeningElement](node: JsxOpeningElement): void TODO node
+    [SyntaxKind.JsxSelfClosingElement](node: JsxSelfClosingElement): void TODO node
+    [SyntaxKind.JsxFragment](node: JsxFragment): void TODO node
+    [SyntaxKind.JsxOpeningFragment](node: JsxOpeningFragment): void TODO node
+    [SyntaxKind.JsxClosingFragment](node: JsxClosingFragment): void TODO node
+    [SyntaxKind.JsxAttribute](node: JsxAttribute): void TODO node
+    [SyntaxKind.JsxSpreadAttribute](node: JsxSpreadAttribute): void TODO node
+    [SyntaxKind.JsxClosingElement](node: JsxClosingElement): void TODO node
+    [SyntaxKind.JsxExpression](node: JsxExpression): void TODO node
+    [SyntaxKind.JsxText](node: JsxText): void TODO node
+
+    [SyntaxKind.NotEmittedStatement](node: NotEmittedStatement): void
+        TODO node
+
+    [SyntaxKind.CommaListExpression](node: CommaListExpression): void
+        TODO node
+
+    [SyntaxKind.EmptyStatement](node: EmptyStatement): void
+        // nothing?
+
+    [SyntaxKind.DebuggerStatement](node: DebuggerStatement): void
+        @write "debugger"
+
+    [SyntaxKind.MissingDeclaration](node: MissingDeclaration): void
+        TODO node
+
+    [SyntaxKind.Block](node: Block): void
+        // todo: if parent is also a block, use `do` to create a scope block
+        @indent : void =>
+            for statement of node.statements
+                @node statement
+                @writeLine ""
+
+    [SyntaxKind.VariableStatement](node: VariableStatement): void
+        if node.modifiers?
+            @modifiers node.modifiers
+        @node node.declarationList
+
+    [SyntaxKind.ExpressionStatement](node: ExpressionStatement): void
+        @node node.expression
+
+    [SyntaxKind.IfStatement](node: IfStatement): void
+        @write "if "
+        @node node.expression
+        @writeLine ""
+        @indent : void =>
+            @node node.thenStatement
+            @writeLine ""
+        if elseStatement := node.elseStatement
+            @write "else "
+            @writeLine ""
+            @indent : void =>
+                @node elseStatement
+
+    [SyntaxKind.DoStatement](node: DoStatement): void
+        @writeLine "do "
+        @indent : void =>
+            @node node.statement
+        @writeLine ""
+        @write " while "
+        @node node.expression
+
+    [SyntaxKind.WhileStatement](node: WhileStatement): void
+        @write "while "
+        @node node.expression
+        @writeLine ""
+        @indent : void =>
+            @node node.statement
+
+    [SyntaxKind.ForStatement](node: ForStatement): void
+        @write "for "
+        if node.initializer?
+            @node node.initializer
+        @write ";"
+        if node.condition?
+            @write " "
+            @node node.condition
+        @write ";"
+        if node.incrementor?
+            @write " "
+            @node node.incrementor
+        @writeLine ""
+        @indent : void =>
+            @node node.statement
+
+    [SyntaxKind.ForInStatement](node: ForInStatement): void
+        @write "for "
+        @node node.initializer
+        @write " in "
+        @node node.expression
+        @writeLine ""
+        @indent : void =>
+            @node node.statement
+
+    [SyntaxKind.ForOfStatement](node: ForOfStatement): void
+        @write "for "
+        if node.awaitModifier?
+            @write "await "
+        @node node.initializer
+        @write " of "
+        @node node.expression
+        @writeLine ""
+        @indent : void =>
+            @node node.statement
+
+    [SyntaxKind.BreakStatement](node: BreakStatement): void
+        @write "break"
+        if node.label?
+            @write " " // TODO: civet also supports `break :label`
+            @node node.label
+
+    [SyntaxKind.ContinueStatement](node: ContinueStatement): void
+        @write "continue"
+        if node.label?
+            @write " " // TODO: civet also supports `continue :label`
+            @node node.label
+
+    [SyntaxKind.ReturnStatement](node: ReturnStatement): void
+        @write "return" // TODO: implicit return at the end of a function/block
+        if node.expression?
+            @write " "
+            @node node.expression
+
+    [SyntaxKind.WithStatement](node: WithStatement): void
+        @write "with "
+        @node node.expression
+        @writeLine ""
+        @indent : void =>
+            @node node.statement
+
+    [SyntaxKind.SwitchStatement](node: SwitchStatement): void
+    [SyntaxKind.CaseBlock](node: CaseBlock): void
+    [SyntaxKind.CaseClause](node: CaseClause): void
+    [SyntaxKind.DefaultClause](node: DefaultClause): void
+    [SyntaxKind.LabeledStatement](node: LabeledStatement): void
+    [SyntaxKind.ThrowStatement](node: ThrowStatement): void
+    [SyntaxKind.TryStatement](node: TryStatement): void
+    [SyntaxKind.CatchClause](node: CatchClause): void
+
+    classLikeDeclaration(node: ClassLikeDeclaration): void
+        if node.modifiers?
+            @modifiers node.modifiers
+        @write "class "
+        if node.name?
+            @node node.name
+        if node.typeParameters?
+            @write "<"
+            for typeParameter of node.typeParameters
+                @node typeParameter
+                @write ", "
+            @write ">"
+        if node.heritageClauses?
+            for heritageClause of node.heritageClauses
+                @node heritageClause
+
+        @indent : void =>
+            for member of node.members
+                @node member
+
+    [SyntaxKind.ClassDeclaration](node: ClassDeclaration): void
+    [SyntaxKind.ClassExpression](node: ClassExpression): void
+        @classLikeDeclaration node
+
+    [SyntaxKind.InterfaceDeclaration](node: InterfaceDeclaration): void
+    [SyntaxKind.HeritageClause](node: HeritageClause): void
+    [SyntaxKind.TypeAliasDeclaration](node: TypeAliasDeclaration): void
+    [SyntaxKind.EnumMember](node: EnumMember): void
+    [SyntaxKind.EnumDeclaration](node: EnumDeclaration): void
+    [SyntaxKind.ModuleDeclaration](node: ModuleDeclaration): void
+    [SyntaxKind.ModuleBlock](node: ModuleBlock): void
+    [SyntaxKind.ImportEqualsDeclaration](node: ImportEqualsDeclaration): void
+    [SyntaxKind.ExternalModuleReference](node: ExternalModuleReference): void
+    [SyntaxKind.ImportDeclaration](node: ImportDeclaration): void
+    [SyntaxKind.ImportClause](node: ImportClause): void
+    [SyntaxKind.AssertEntry](node: AssertEntry): void
+    [SyntaxKind.AssertClause](node: AssertClause): void
+    [SyntaxKind.NamespaceImport](node: NamespaceImport): void
+    [SyntaxKind.NamespaceExport](node: NamespaceExport): void
+    [SyntaxKind.NamespaceExportDeclaration](node: NamespaceExportDeclaration): void
+    [SyntaxKind.ExportDeclaration](node: ExportDeclaration): void
+    [SyntaxKind.NamedImports](node: NamedImports): void
+    [SyntaxKind.NamedExports](node: NamedExports): void
+    [SyntaxKind.ImportSpecifier](node: ImportSpecifier): void
+    [SyntaxKind.ExportSpecifier](node: ExportSpecifier): void
+    [SyntaxKind.ExportAssignment](node: ExportAssignment): void
+    [SyntaxKind.JSDocTypeExpression](node: JSDocTypeExpression): void
+    [SyntaxKind.JSDocNameReference](node: JSDocNameReference): void
+    [SyntaxKind.JSDocMemberName](node: JSDocMemberName): void
+    [SyntaxKind.JSDocAllType](node: JSDocAllType): void
+    [SyntaxKind.JSDocUnknownType](node: JSDocUnknownType): void
+    [SyntaxKind.JSDocNonNullableType](node: JSDocNonNullableType): void
+    [SyntaxKind.JSDocNullableType](node: JSDocNullableType): void
+    [SyntaxKind.JSDocOptionalType](node: JSDocOptionalType): void
+    [SyntaxKind.JSDocFunctionType](node: JSDocFunctionType): void
+    [SyntaxKind.JSDocVariadicType](node: JSDocVariadicType): void
+    [SyntaxKind.JSDocNamepathType](node: JSDocNamepathType): void
+    [SyntaxKind.JSDoc](node: JSDoc): void
+    [SyntaxKind.JSDocLink](node: JSDocLink): void
+    [SyntaxKind.JSDocLinkCode](node: JSDocLinkCode): void
+    [SyntaxKind.JSDocLinkPlain](node: JSDocLinkPlain): void
+    [SyntaxKind.JSDocText](node: JSDocText): void
+    [SyntaxKind.JSDocTag](node: JSDocUnknownTag): void
+    [SyntaxKind.JSDocAugmentsTag](node: JSDocAugmentsTag): void
+    [SyntaxKind.JSDocImplementsTag](node: JSDocImplementsTag): void
+    [SyntaxKind.JSDocAuthorTag](node: JSDocAuthorTag): void
+    [SyntaxKind.JSDocDeprecatedTag](node: JSDocDeprecatedTag): void
+    [SyntaxKind.JSDocClassTag](node: JSDocClassTag): void
+    [SyntaxKind.JSDocPublicTag](node: JSDocPublicTag): void
+    [SyntaxKind.JSDocPrivateTag](node: JSDocPrivateTag): void
+    [SyntaxKind.JSDocProtectedTag](node: JSDocProtectedTag): void
+    [SyntaxKind.JSDocReadonlyTag](node: JSDocReadonlyTag): void
+    [SyntaxKind.JSDocOverrideTag](node: JSDocOverrideTag): void
+    [SyntaxKind.JSDocEnumTag](node: JSDocEnumTag): void
+    [SyntaxKind.JSDocThisTag](node: JSDocThisTag): void
+    [SyntaxKind.JSDocTemplateTag](node: JSDocTemplateTag): void
+    [SyntaxKind.JSDocSeeTag](node: JSDocSeeTag): void
+    [SyntaxKind.JSDocReturnTag](node: JSDocReturnTag): void
+    [SyntaxKind.JSDocTypeTag](node: JSDocTypeTag): void
+    [SyntaxKind.JSDocTypedefTag](node: JSDocTypedefTag): void
+    [SyntaxKind.JSDocCallbackTag](node: JSDocCallbackTag): void
+    [SyntaxKind.JSDocOverloadTag](node: JSDocOverloadTag): void
+    [SyntaxKind.JSDocThrowsTag](node: JSDocThrowsTag): void
+    [SyntaxKind.JSDocSignature](node: JSDocSignature): void
+    [SyntaxKind.JSDocPropertyTag](node: JSDocPropertyTag): void
+    [SyntaxKind.JSDocParameterTag](node: JSDocParameterTag): void
+    [SyntaxKind.JSDocTypeLiteral](node: JSDocTypeLiteral): void
+    [SyntaxKind.JSDocSatisfiesTag](node: JSDocSatisfiesTag): void
+    [SyntaxKind.SourceFile](node: SourceFile): void
+        for statement of node.statements
+            @node statement
+
+    [SyntaxKind.Bundle](node: Bundle): void
+        for sourceFile of node.sourceFiles
+            @node sourceFile
+
+    [SyntaxKind.InputFiles](node: InputFiles): void
+        TODO node // deprecated
+
+    [SyntaxKind.UnparsedSource](node: UnparsedSource): void
+    [SyntaxKind.UnparsedPrologue](node: UnparsedPrologue): void
+    [SyntaxKind.UnparsedPrepend](node: UnparsedPrepend): void
+    [SyntaxKind.UnparsedText](node: UnparsedTextLike): void
+    [SyntaxKind.UnparsedSyntheticReference](node: UnparsedSyntheticReference): void
+    [SyntaxKind.SyntaxList](node: SyntaxList): void

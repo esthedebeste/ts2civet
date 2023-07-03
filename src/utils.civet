@@ -1,0 +1,23 @@
+export const enum StringLiteralType
+    SingleQuote
+    DoubleQuote
+    Template
+
+regexes: Record<StringLiteralType, RegExp> :=
+    [StringLiteralType.SingleQuote]: /'/g
+    [StringLiteralType.DoubleQuote]: /"/g
+    [StringLiteralType.Template]: /`/g
+
+regexReplaces: Record<StringLiteralType, (match: string) => string> := {
+    [StringLiteralType.SingleQuote](match: string)
+        `\\${match}`
+    [StringLiteralType.DoubleQuote](match: string)
+        `\\${match}`
+    [StringLiteralType.Template](match: string)
+        `\\${match}`
+}
+
+
+/** Converts a string to something that can be used in that kind of string. */
+export function stringLiteral(text: string, literalType: StringLiteralType): string
+    text.replaceAll regexes[literalType], regexReplaces[literalType]

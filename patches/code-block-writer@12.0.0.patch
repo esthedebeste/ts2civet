@@ -1,0 +1,51 @@
+diff --git a/esm/mod.d.ts b/esm/mod.d.ts
+index 726c8ae37b8390ed4e8404bf9aaa45ec0b37c91a..e61a59ab429f765bf173638830969091d20c3b64 100644
+--- a/esm/mod.d.ts
++++ b/esm/mod.d.ts
+@@ -26,7 +26,7 @@ export interface Options {
+ /**
+  * Code writer that assists with formatting and visualizing blocks of JavaScript or TypeScript code.
+  */
+-export default class CodeBlockWriter {
++export class CodeBlockWriter {
+     /**
+      * Constructor.
+      * @param opts - Options for the writer.
+diff --git a/esm/mod.js b/esm/mod.js
+index 8dd69760c4e668302357671722eed03df0e34a01..710cb5155a4b3a39903051526e00127cf43ce503 100644
+--- a/esm/mod.js
++++ b/esm/mod.js
+@@ -36,7 +36,7 @@ const isCharToHandle = new Set([
+ /**
+  * Code writer that assists with formatting and visualizing blocks of JavaScript or TypeScript code.
+  */
+-export default class CodeBlockWriter {
++export class CodeBlockWriter {
+     /**
+      * Constructor.
+      * @param opts - Options for the writer.
+diff --git a/script/mod.d.ts b/script/mod.d.ts
+index 726c8ae37b8390ed4e8404bf9aaa45ec0b37c91a..e61a59ab429f765bf173638830969091d20c3b64 100644
+--- a/script/mod.d.ts
++++ b/script/mod.d.ts
+@@ -26,7 +26,7 @@ export interface Options {
+ /**
+  * Code writer that assists with formatting and visualizing blocks of JavaScript or TypeScript code.
+  */
+-export default class CodeBlockWriter {
++export class CodeBlockWriter {
+     /**
+      * Constructor.
+      * @param opts - Options for the writer.
+diff --git a/script/mod.js b/script/mod.js
+index f596e691cb3d4ac06d24ae7a8d37425ab9da8a13..ccc7a4f7692981de62843d65f7e0ac5b1dbdce4e 100644
+--- a/script/mod.js
++++ b/script/mod.js
+@@ -844,6 +844,7 @@ class CodeBlockWriter {
+     }
+ }
+ exports.default = CodeBlockWriter;
++exports.CodeBlockWriter = CodeBlockWriter;
+ /** @internal */
+ Object.defineProperty(CodeBlockWriter, "_newLineRegEx", {
+     enumerable: true,

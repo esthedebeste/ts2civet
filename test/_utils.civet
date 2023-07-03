@@ -1,0 +1,22 @@
+{ transform, type Options as OrigOptions } from ../src/transform.civet
+{ operator equal, ok: assert } from node:assert/strict
+
+export interface Options extends OrigOptions
+    filename?: string
+
+defaultOpts := { filename: "./code.tsx" } as const
+export options: Options .= { ...defaultOpts }
+
+function transforms(source: string)
+    transform source, options.filename ?? "./code.tsx", { +noHeader, ...options }
+
+export operator becomes(source: string, output: string)
+    transforms source |> & equal output
+
+export operator contains(source: string, output: string)
+    assert output.trim() is in transforms source
+
+export function setOptions(opts: Partial<Options>)
+    options = { ...defaultOpts, ...opts }
+
+export type Tests = Record<string, =>>
