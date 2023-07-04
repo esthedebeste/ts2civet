@@ -15,6 +15,7 @@
 		"build": "civet ./build.civet",
 		"prepare": "civet ./build.civet",
 		"start": "civet ./build.civet --dev && node ./dist/cli.js",
+		"verify": "civet ./build.civet --dev && node ./dist/cli.js ./test/test.tsx && civet -c ./test/test.civet -o .verify.tsx",
 		"test": "node --loader @danielx/civet/esm --test test/_run.civet"
 	},
 	"keywords": [
@@ -27,15 +28,16 @@
 		"code-block-writer": "^12.0.0",
 		"glob": "^10.2.6",
 		"meow": "^12.0.1",
-		"typescript": "^5.1.3"
+		"typescript": "^5.1.6"
 	},
 	"devDependencies": {
-		"@danielx/civet": "^0.6.2",
+		"@danielx/civet": "^0.6.10",
 		"@types/node": "^20.2.3",
 		"prettier": "^2.8.8"
 	},
 	"files": [
-		"dist"
+		"dist/*.js",
+		"dist/transform.d.ts"
 	],
 	"type": "module",
 	"pnpm": {

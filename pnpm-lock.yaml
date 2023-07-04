@@ -6,22 +6,22 @@ patchedDependencies:
     path: patches/code-block-writer@12.0.0.patch
 
 specifiers:
-  '@danielx/civet': ^0.6.2
+  '@danielx/civet': ^0.6.10
   '@types/node': ^20.2.3
   code-block-writer: ^12.0.0
   glob: ^10.2.6
   meow: ^12.0.1
   prettier: ^2.8.8
-  typescript: ^5.1.3
+  typescript: ^5.1.6
 
 dependencies:
   code-block-writer: 12.0.0_yfus3imijji6ie7gszx65h5qxy
   glob: 10.2.6
   meow: 12.0.1
-  typescript: 5.1.3
+  typescript: 5.1.6
 
 devDependencies:
-  '@danielx/civet': 0.6.2
+  '@danielx/civet': 0.6.10
   '@types/node': 20.2.3
   prettier: 2.8.8
 
@@ -55,8 +55,8 @@ packages:
       '@jridgewell/trace-mapping': 0.3.9
     dev: true
 
-  /@danielx/civet/0.6.2:
-    resolution: {integrity: sha512-wApJwBdxRJUgnL/6yDKjIRfOYiVfE2NDP9iWTophrywnMx26Vpm7X3wMtnSUSL8jCgtWTGsvBRrfaRelkv3v8w==}
+  /@danielx/civet/0.6.10:
+    resolution: {integrity: sha512-d0VZN8w6TPQgmMRpxd7ws/r0ZTL8GC5eFNpREGximKOmFUwsH5tEcgIzr3MPcvUZDZ8NelYhwfmvZxsBaLIoZA==}
     engines: {node: '>=19 || ^18.6.0 || ^16.17.0'}
     hasBin: true
     dependencies:
@@ -650,8 +650,8 @@ packages:
     engines: {node: '>=14.16'}
     dev: false
 
-  /typescript/5.1.3:
-    resolution: {integrity: sha512-XH627E9vkeqhlZFQuL+UsyAXEnibT0kWR2FWONlr4sTjvxyJYnyefgrkyECLzM5NenmKzRAy2rR/OlYLA1HkZw==}
+  /typescript/5.1.6:
+    resolution: {integrity: sha512-zaWCozRZ6DLEWAWFrVDz1H6FVXzUSfTy5FUMWsQlU8Ym5JP9eO4xkTIROFCQvhQf61z6O/G6ugw3SgAnvvm+HA==}
     engines: {node: '>=14.17'}
     hasBin: true
     dev: false

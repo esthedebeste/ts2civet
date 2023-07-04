@@ -1,11 +1,13 @@
 { CodeBlockWriter, type Options } from code-block-writer
-{ SyntaxKind, idText, ModifierLike, Node, NodeArray, tokenToString, Identifier, QualifiedName, ComputedPropertyName, PrivateIdentifier, Decorator, TypeParameterDeclaration, SignatureDeclaration, CallSignatureDeclaration, ConstructSignatureDeclaration, VariableDeclaration, VariableDeclarationList, ParameterDeclaration, BindingElement, PropertySignature, PropertyDeclaration, PropertyAssignment, ShorthandPropertyAssignment, SpreadAssignment, ObjectBindingPattern, ArrayBindingPattern, FunctionLikeDeclaration, FunctionDeclaration, MethodSignature, MethodDeclaration, ConstructorDeclaration, SemicolonClassElement, GetAccessorDeclaration, SetAccessorDeclaration, IndexSignatureDeclaration, ClassStaticBlockDeclaration, ImportTypeAssertionContainer, ImportTypeNode, ThisTypeNode, FunctionOrConstructorTypeNodeBase, FunctionTypeNode, ConstructorTypeNode, TypeReferenceNode, TypePredicateNode, TypeQueryNode, TypeLiteralNode, ArrayTypeNode, TupleTypeNode, NamedTupleMember, OptionalTypeNode, RestTypeNode, UnionTypeNode, IntersectionTypeNode, ConditionalTypeNode, InferTypeNode, ParenthesizedTypeNode, TypeOperatorNode, IndexedAccessTypeNode, MappedTypeNode, LiteralTypeNode, StringLiteral, TemplateLiteralTypeNode, TemplateLiteralTypeSpan, OmittedExpression, PartiallyEmittedExpression, PrefixUnaryExpression, PostfixUnaryExpression, NullLiteral, TrueLiteral, FalseLiteral, ThisExpression, SuperExpression, ImportExpression, DeleteExpression, TypeOfExpression, VoidExpression, AwaitExpression, YieldExpression, SyntheticExpression, BinaryExpression, ConditionalExpression, FunctionExpression, ArrowFunction, RegularExpressionLiteral, NoSubstitutionTemplateLiteral, NumericLiteral, BigIntLiteral, TemplateHead, TemplateMiddle, TemplateTail, TemplateExpression, TemplateSpan, ParenthesizedExpression, ArrayLiteralExpression, SpreadElement, ObjectLiteralExpression, PropertyAccessExpression, ElementAccessExpression, CallExpression, ExpressionWithTypeArguments, NewExpression, TaggedTemplateExpression, AsExpression, TypeAssertion, SatisfiesExpression, NonNullExpression, MetaProperty, JsxElement, JsxNamespacedName, JsxOpeningElement, JsxSelfClosingElement, JsxFragment, JsxOpeningFragment, JsxClosingFragment, JsxAttribute, JsxSpreadAttribute, JsxClosingElement, JsxExpression, JsxText, NotEmittedStatement, CommaListExpression, EmptyStatement, DebuggerStatement, MissingDeclaration, Block, VariableStatement, ExpressionStatement, IfStatement, DoStatement, WhileStatement, ForStatement, ForInStatement, ForOfStatement, BreakStatement, ContinueStatement, ReturnStatement, WithStatement, SwitchStatement, CaseBlock, CaseClause, DefaultClause, LabeledStatement, ThrowStatement, TryStatement, CatchClause, ClassLikeDeclaration, ClassDeclaration, ClassExpression, InterfaceDeclaration, HeritageClause, TypeAliasDeclaration, EnumMember, EnumDeclaration, ModuleDeclaration, ModuleBlock, ImportEqualsDeclaration, ExternalModuleReference, ImportDeclaration, ImportClause, AssertEntry, AssertClause, NamespaceImport, NamespaceExport, NamespaceExportDeclaration, ExportDeclaration, NamedImports, NamedExports, ImportSpecifier, ExportSpecifier, ExportAssignment, JSDocTypeExpression, JSDocNameReference, JSDocMemberName, JSDocAllType, JSDocUnknownType, JSDocNonNullableType, JSDocNullableType, JSDocOptionalType, JSDocFunctionType, JSDocVariadicType, JSDocNamepathType, JSDoc, JSDocLink, JSDocLinkCode, JSDocLinkPlain, JSDocText, JSDocUnknownTag, JSDocAugmentsTag, JSDocImplementsTag, JSDocAuthorTag, JSDocDeprecatedTag, JSDocClassTag, JSDocPublicTag, JSDocPrivateTag, JSDocProtectedTag, JSDocReadonlyTag, JSDocOverrideTag, JSDocEnumTag, JSDocThisTag, JSDocTemplateTag, JSDocSeeTag, JSDocReturnTag, JSDocTypeTag, JSDocTypedefTag, JSDocCallbackTag, JSDocOverloadTag, JSDocThrowsTag, JSDocSignature, JSDocPropertyTag, JSDocParameterTag, JSDocTypeLiteral, JSDocSatisfiesTag, SourceFile, Bundle, InputFiles, UnparsedSource, UnparsedPrologue, UnparsedPrepend, UnparsedTextLike, UnparsedSyntheticReference, JsonMinusNumericLiteral, SyntaxList } from typescript
+ts from typescript
+{ SyntaxKind, idText, tokenToString } := ts
+type { ModifierLike, Node, NodeArray, Identifier, QualifiedName, ComputedPropertyName, PrivateIdentifier, Decorator, TypeParameterDeclaration, SignatureDeclaration, CallSignatureDeclaration, ConstructSignatureDeclaration, VariableDeclaration, VariableDeclarationList, ParameterDeclaration, BindingElement, PropertySignature, PropertyDeclaration, PropertyAssignment, ShorthandPropertyAssignment, SpreadAssignment, ObjectBindingPattern, ArrayBindingPattern, FunctionLikeDeclaration, FunctionDeclaration, MethodSignature, MethodDeclaration, ConstructorDeclaration, SemicolonClassElement, GetAccessorDeclaration, SetAccessorDeclaration, IndexSignatureDeclaration, ClassStaticBlockDeclaration, ImportTypeAssertionContainer, ImportTypeNode, ThisTypeNode, FunctionOrConstructorTypeNodeBase, FunctionTypeNode, ConstructorTypeNode, TypeReferenceNode, TypePredicateNode, TypeQueryNode, TypeLiteralNode, ArrayTypeNode, TupleTypeNode, NamedTupleMember, OptionalTypeNode, RestTypeNode, UnionTypeNode, IntersectionTypeNode, ConditionalTypeNode, InferTypeNode, ParenthesizedTypeNode, TypeOperatorNode, IndexedAccessTypeNode, MappedTypeNode, LiteralTypeNode, StringLiteral, TemplateLiteralTypeNode, TemplateLiteralTypeSpan, OmittedExpression, PartiallyEmittedExpression, PrefixUnaryExpression, PostfixUnaryExpression, NullLiteral, TrueLiteral, FalseLiteral, ThisExpression, SuperExpression, ImportExpression, DeleteExpression, TypeOfExpression, VoidExpression, AwaitExpression, YieldExpression, SyntheticExpression, BinaryExpression, ConditionalExpression, FunctionExpression, ArrowFunction, RegularExpressionLiteral, NoSubstitutionTemplateLiteral, NumericLiteral, BigIntLiteral, TemplateHead, TemplateMiddle, TemplateTail, TemplateExpression, TemplateSpan, ParenthesizedExpression, ArrayLiteralExpression, SpreadElement, ObjectLiteralExpression, PropertyAccessExpression, ElementAccessExpression, CallExpression, ExpressionWithTypeArguments, NewExpression, TaggedTemplateExpression, AsExpression, TypeAssertion, SatisfiesExpression, NonNullExpression, MetaProperty, JsxElement, JsxNamespacedName, JsxOpeningElement, JsxSelfClosingElement, JsxFragment, JsxOpeningFragment, JsxClosingFragment, JsxAttribute, JsxSpreadAttribute, JsxClosingElement, JsxExpression, JsxText, NotEmittedStatement, CommaListExpression, EmptyStatement, DebuggerStatement, MissingDeclaration, Block, VariableStatement, ExpressionStatement, IfStatement, DoStatement, WhileStatement, ForStatement, ForInStatement, ForOfStatement, BreakStatement, ContinueStatement, ReturnStatement, WithStatement, SwitchStatement, CaseBlock, CaseClause, DefaultClause, LabeledStatement, ThrowStatement, TryStatement, CatchClause, ClassLikeDeclaration, ClassDeclaration, ClassExpression, InterfaceDeclaration, HeritageClause, TypeAliasDeclaration, EnumMember, EnumDeclaration, ModuleDeclaration, ModuleBlock, ImportEqualsDeclaration, ExternalModuleReference, ImportDeclaration, ImportClause, AssertEntry, AssertClause, NamespaceImport, NamespaceExport, NamespaceExportDeclaration, ExportDeclaration, NamedImports, NamedExports, ImportSpecifier, ExportSpecifier, ExportAssignment, JSDocTypeExpression, JSDocNameReference, JSDocMemberName, JSDocAllType, JSDocUnknownType, JSDocNonNullableType, JSDocNullableType, JSDocOptionalType, JSDocFunctionType, JSDocVariadicType, JSDocNamepathType, JSDoc, JSDocLink, JSDocLinkCode, JSDocLinkPlain, JSDocText, JSDocUnknownTag, JSDocAugmentsTag, JSDocImplementsTag, JSDocAuthorTag, JSDocDeprecatedTag, JSDocClassTag, JSDocPublicTag, JSDocPrivateTag, JSDocProtectedTag, JSDocReadonlyTag, JSDocOverrideTag, JSDocEnumTag, JSDocThisTag, JSDocTemplateTag, JSDocSeeTag, JSDocReturnTag, JSDocTypeTag, JSDocTypedefTag, JSDocCallbackTag, JSDocOverloadTag, JSDocThrowsTag, JSDocSignature, JSDocPropertyTag, JSDocParameterTag, JSDocTypeLiteral, JSDocSatisfiesTag, SourceFile, Bundle, InputFiles, UnparsedSource, UnparsedPrologue, UnparsedPrepend, UnparsedTextLike, UnparsedSyntheticReference, JsonMinusNumericLiteral, SyntaxList } from typescript
 { StringLiteralType, stringLiteral } from ./utils.civet
 
-function TODO(node: { kind: SyntaxKind }): never
+function TODO(node: { kind: ts.SyntaxKind }): never
     throw new Error `TODO: Unhandled node type: ${SyntaxKind[node.kind]}`
 
-function keyword(kind: SyntaxKind): string
+function keyword(kind: ts.SyntaxKind): string
     str := tokenToString kind
     if str?
         return str
@@ -16,15 +18,18 @@ function isMultiline(node: any)
     Boolean(node.multiLine)
 
 export class Emitter < CodeBlockWriter
-    @(public ast: SourceFile)
+    ast: SourceFile
+    @(ast: SourceFile)
         super
             useTabs: true
             useSingleQuote: true
+        @ast = ast
 
     modifiers(modifiers: NodeArray<ModifierLike>): void
         for modifier of modifiers
             if modifier.kind is SyntaxKind.Decorator
                 @[SyntaxKind.Decorator] modifier
+                @newLine()
             else
                 @write modifier.getText @ast
                 @write " "
@@ -32,7 +37,7 @@ export class Emitter < CodeBlockWriter
     node(node: Node): void
         { kind } := node
         if Object.hasOwn Emitter.prototype, kind
-            @[kind as Extract<keyof Emitter, SyntaxKind>] node as any
+            @[kind as Extract<keyof Emitter, ts.SyntaxKind>] node as any
         else
             TODO node
 
@@ -69,6 +74,12 @@ export class Emitter < CodeBlockWriter
             @write " = "
             @node node.default
 
+    nodeArray(nodes: NodeArray<Node>, separator: string = ", "): void
+        for let i = 0; i < nodes.length; i++
+            if i > 0
+                @write separator
+            @node nodes[i]
+
     signatureDeclaration(node: SignatureDeclaration): void
         if "modifiers" in node and node.modifiers?
             @modifiers node.modifiers
@@ -85,15 +96,11 @@ export class Emitter < CodeBlockWriter
 
         if node.typeParameters?
             @write "<"
-            for typeParameter of node.typeParameters
-                @node typeParameter
-                @write ", "
+            @nodeArray node.typeParameters
             @write ">"
 
         @write "("
-        for parameter of node.parameters
-            @node parameter
-            @write ", "
+        @nodeArray node.parameters
         @write ")"
 
         if node.type?
@@ -158,6 +165,7 @@ export class Emitter < CodeBlockWriter
         if node.initializer?
             @write " = "
             @node node.initializer
+        @newLine()
 
     [SyntaxKind.PropertyAssignment](node: PropertyAssignment): void
 
@@ -167,16 +175,12 @@ export class Emitter < CodeBlockWriter
 
     [SyntaxKind.ObjectBindingPattern](node: ObjectBindingPattern): void
         @write "{"
-        for element of node.elements
-            @node element
-            @write ", "
+        @nodeArray node.elements
         @write "}"
 
     [SyntaxKind.ArrayBindingPattern](node: ArrayBindingPattern): void
         @write "["
-        for element of node.elements
-            @node element
-            @write ", " // TODO: multiline doesn't need commas
+        @nodeArray node.elements // TODO: multiline doesn't need commas
         @write "]"
 
     functionLikeDeclaration(node: FunctionLikeDeclaration): void
@@ -197,16 +201,14 @@ export class Emitter < CodeBlockWriter
             @write "?"
         if node.typeParameters?
             @write "<"
-            for typeParameter of node.typeParameters
-                @node typeParameter
-                @write ", "
+            @nodeArray node.typeParameters
             @write ">"
         if node.parameters.length > 0
             @write "("
-            for parameter of node.parameters
-                @node parameter
-                @write ", "
+            @nodeArray node.parameters
             @write ")"
+        else if node.kind is not in [SyntaxKind.ArrowFunction, SyntaxKind.FunctionDeclaration, SyntaxKind.FunctionExpression]
+            @write "()"
         if node.type?
             @write ": "
             @node node.type
@@ -271,9 +273,7 @@ export class Emitter < CodeBlockWriter
         @node node.typeName
         if node.typeArguments?
             @write "<"
-            for typeArgument of node.typeArguments
-                @node typeArgument
-                @write ", "
+            @nodeArray node.typeArguments
             @write ">"
 
     [SyntaxKind.TypePredicate](node: TypePredicateNode): void
@@ -292,7 +292,7 @@ export class Emitter < CodeBlockWriter
         @indent : void =>
             for member of node.members
                 @node member
-                @writeLine ""
+                @newLine()
 
     [SyntaxKind.ArrayType](node: ArrayTypeNode): void
         @node node.elementType
@@ -300,9 +300,7 @@ export class Emitter < CodeBlockWriter
 
     [SyntaxKind.TupleType](node: TupleTypeNode): void
         @write "["
-        for element of node.elements
-            @node element
-            @write ", "
+        @nodeArray node.elements
         @write "]"
 
     [SyntaxKind.NamedTupleMember](node: NamedTupleMember): void
@@ -509,13 +507,11 @@ export class Emitter < CodeBlockWriter
             @indent : void =>
                 for element of node.elements
                     @node element
-                    @writeLine ""
+                    @newLine()
             @write "]"
         else
             @write "["
-            for element of node.elements
-                @node element
-                @write ", "
+            @nodeArray node.elements
             @write "]"
 
     [SyntaxKind.SpreadElement](node: SpreadElement): void
@@ -529,11 +525,9 @@ export class Emitter < CodeBlockWriter
             @indent : void =>
                 for property of node.properties
                     @node property
-                    @writeLine ""
+                    @newLine()
         else
-            for property of node.properties
-                @node property
-                @write ", "
+            @nodeArray node.properties
         @write "}"
 
     [SyntaxKind.PropertyAccessExpression](node: PropertyAccessExpression): void
@@ -555,24 +549,18 @@ export class Emitter < CodeBlockWriter
         @node node.expression
         if node.typeArguments?
             @write "<"
-            for typeArgument of node.typeArguments
-                @node typeArgument
-                @write ", "
+            @nodeArray node.typeArguments
             @write ">"
 
         @write "("
-        for argument of node.arguments
-            @node argument
-            @write ", "
+        @nodeArray node.arguments
         @write ")"
 
     [SyntaxKind.ExpressionWithTypeArguments](node: ExpressionWithTypeArguments): void
         @node node.expression
         if node.typeArguments?
             @write "<"
-            for typeArgument of node.typeArguments
-                @node typeArgument
-                @write ", "
+            @nodeArray node.typeArguments
             @write ">"
 
     [SyntaxKind.NewExpression](node: NewExpression): void
@@ -580,24 +568,18 @@ export class Emitter < CodeBlockWriter
         @node node.expression
         if node.typeArguments?
             @write "<"
-            for typeArgument of node.typeArguments
-                @node typeArgument
-                @write ", "
+            @nodeArray node.typeArguments
             @write ">"
         @write "("
         if node.arguments?
-            for argument of node.arguments
-                @node argument
-                @write ", "
+            @nodeArray node.arguments
         @write ")"
 
     [SyntaxKind.TaggedTemplateExpression](node: TaggedTemplateExpression): void
         @node node.tag
         if node.typeArguments?
             @write "<"
-            for typeArgument of node.typeArguments
-                @node typeArgument
-                @write ", "
+            @nodeArray node.typeArguments
             @write ">"
         @node node.template
 
@@ -648,9 +630,10 @@ export class Emitter < CodeBlockWriter
 
     [SyntaxKind.EmptyStatement](node: EmptyStatement): void
         // nothing?
+        @newLine()
 
     [SyntaxKind.DebuggerStatement](node: DebuggerStatement): void
-        @write "debugger"
+        @writeLine "debugger"
 
     [SyntaxKind.MissingDeclaration](node: MissingDeclaration): void
         TODO node
@@ -660,41 +643,40 @@ export class Emitter < CodeBlockWriter
         @indent : void =>
             for statement of node.statements
                 @node statement
-                @writeLine ""
 
     [SyntaxKind.VariableStatement](node: VariableStatement): void
         if node.modifiers?
             @modifiers node.modifiers
         @node node.declarationList
+        @newLine()
 
     [SyntaxKind.ExpressionStatement](node: ExpressionStatement): void
         @node node.expression
+        @newLine()
 
     [SyntaxKind.IfStatement](node: IfStatement): void
         @write "if "
         @node node.expression
-        @writeLine ""
+        @newLine()
         @indent : void =>
             @node node.thenStatement
-            @writeLine ""
         if elseStatement := node.elseStatement
             @write "else "
-            @writeLine ""
+            @newLine()
             @indent : void =>
                 @node elseStatement
 
     [SyntaxKind.DoStatement](node: DoStatement): void
-        @writeLine "do "
+        @writeLine "do"
         @indent : void =>
             @node node.statement
-        @writeLine ""
-        @write " while "
+        @write "while "
         @node node.expression
 
     [SyntaxKind.WhileStatement](node: WhileStatement): void
         @write "while "
         @node node.expression
-        @writeLine ""
+        @newLine()
         @indent : void =>
             @node node.statement
 
@@ -710,7 +692,7 @@ export class Emitter < CodeBlockWriter
         if node.incrementor?
             @write " "
             @node node.incrementor
-        @writeLine ""
+        @newLine()
         @indent : void =>
             @node node.statement
 
@@ -719,7 +701,7 @@ export class Emitter < CodeBlockWriter
         @node node.initializer
         @write " in "
         @node node.expression
-        @writeLine ""
+        @newLine()
         @indent : void =>
             @node node.statement
 
@@ -730,7 +712,7 @@ export class Emitter < CodeBlockWriter
         @node node.initializer
         @write " of "
         @node node.expression
-        @writeLine ""
+        @newLine()
         @indent : void =>
             @node node.statement
 
@@ -739,34 +721,92 @@ export class Emitter < CodeBlockWriter
         if node.label?
             @write " " // TODO: civet also supports `break :label`
             @node node.label
+        @newLine()
 
     [SyntaxKind.ContinueStatement](node: ContinueStatement): void
         @write "continue"
         if node.label?
             @write " " // TODO: civet also supports `continue :label`
             @node node.label
+        @newLine()
 
     [SyntaxKind.ReturnStatement](node: ReturnStatement): void
         @write "return" // TODO: implicit return at the end of a function/block
         if node.expression?
             @write " "
             @node node.expression
+        @newLine()
 
     [SyntaxKind.WithStatement](node: WithStatement): void
         @write "with "
         @node node.expression
-        @writeLine ""
+        @newLine()
         @indent : void =>
             @node node.statement
+        @newLine()
 
     [SyntaxKind.SwitchStatement](node: SwitchStatement): void
+        @write "switch "
+        @node node.expression
+        @newLine()
+        @indent : void =>
+            @node node.caseBlock
+        @newLine()
+
     [SyntaxKind.CaseBlock](node: CaseBlock): void
+        for clause of node.clauses
+            @node clause
+            @newLine()
+
     [SyntaxKind.CaseClause](node: CaseClause): void
+        // TODO: add `when` for auto-break
+        @write "case "
+        @node node.expression
+        @write ":"
+        if node.statements.length > 0
+            @newLine()
+            @indent : void =>
+                for statement of node.statements
+                    @node statement
+
     [SyntaxKind.DefaultClause](node: DefaultClause): void
+        @write "default:"
+        if node.statements.length > 0
+            @newLine()
+            @indent : void =>
+                for statement of node.statements
+                    @node statement
+
     [SyntaxKind.LabeledStatement](node: LabeledStatement): void
+        @write ":"
+        @node node.label
+        @write " "
+        @node node.statement
+
     [SyntaxKind.ThrowStatement](node: ThrowStatement): void
+        @write "throw "
+        @node node.expression
+        @newLine()
+
     [SyntaxKind.TryStatement](node: TryStatement): void
+        @write "try"
+        @node node.tryBlock
+        if node.catchClause?
+            @node node.catchClause
+        if node.finallyBlock? and node.finallyBlock.statements.length > 0
+            @newLine()
+            @write "finally "
+            @node node.finallyBlock
+
     [SyntaxKind.CatchClause](node: CatchClause): void
+        if node.block.statements.length is 0
+            return // do not print if empty, civet allows `try { }` without catch/finally
+        @newLine()
+        @write "catch "
+        if node.variableDeclaration?
+            @node node.variableDeclaration
+        @newLine()
+        @node node.block
 
     classLikeDeclaration(node: ClassLikeDeclaration): void
         if node.modifiers?
@@ -776,9 +816,7 @@ export class Emitter < CodeBlockWriter
             @node node.name
         if node.typeParameters?
             @write "<"
-            for typeParameter of node.typeParameters
-                @node typeParameter
-                @write ", "
+            @nodeArray node.typeParameters
             @write ">"
         if node.heritageClauses?
             for heritageClause of node.heritageClauses
@@ -789,31 +827,207 @@ export class Emitter < CodeBlockWriter
                 @node member
 
     [SyntaxKind.ClassDeclaration](node: ClassDeclaration): void
+        @classLikeDeclaration node
+        @newLine()
+
     [SyntaxKind.ClassExpression](node: ClassExpression): void
         @classLikeDeclaration node
 
     [SyntaxKind.InterfaceDeclaration](node: InterfaceDeclaration): void
+        if node.modifiers?
+            @modifiers node.modifiers
+        @write "interface "
+        @node node.name
+        if node.typeParameters?
+            @write "<"
+            @nodeArray node.typeParameters
+            @write ">"
+        if node.heritageClauses?
+            for heritageClause of node.heritageClauses
+                @node heritageClause
+        @newLine()
+        @indent : void =>
+            for member of node.members
+                @node member
+        @newLine()
+
     [SyntaxKind.HeritageClause](node: HeritageClause): void
+        switch node.token
+            when SyntaxKind.ExtendsKeyword
+                @write " < "
+            when SyntaxKind.ImplementsKeyword
+                @write " <: "
+            else
+                throw new Error "Unknown heritage clause token: #{node.token}"
+        @nodeArray node.types
+
     [SyntaxKind.TypeAliasDeclaration](node: TypeAliasDeclaration): void
+        if node.modifiers?
+            @modifiers node.modifiers
+        @write "type "
+        @node node.name
+        if node.typeParameters?
+            @write "<"
+            @nodeArray node.typeParameters
+            @write ">"
+        @write " = "
+        @node node.type
+        @newLine()
+
     [SyntaxKind.EnumMember](node: EnumMember): void
+        @node node.name
+        if node.initializer?
+            @write " = "
+            @node node.initializer
+        @newLine()
+
     [SyntaxKind.EnumDeclaration](node: EnumDeclaration): void
+        if node.modifiers?
+            @modifiers node.modifiers
+        @write "enum "
+        @node node.name
+        @newLine()
+        @indent : void =>
+            for member of node.members
+                @node member
+
     [SyntaxKind.ModuleDeclaration](node: ModuleDeclaration): void
+        if node.modifiers?
+            @modifiers node.modifiers
+        @write "module "
+        @node node.name
+        if node.body?
+            @newLine()
+            @node node.body
+        @newLine()
+
     [SyntaxKind.ModuleBlock](node: ModuleBlock): void
+        @indent : void =>
+            for statement of node.statements
+                @node statement
+
     [SyntaxKind.ImportEqualsDeclaration](node: ImportEqualsDeclaration): void
+        if node.modifiers?
+            @modifiers node.modifiers
+        @write "import "
+        @node node.name
+        @write " = "
+        @node node.moduleReference
+        @newLine()
+
     [SyntaxKind.ExternalModuleReference](node: ExternalModuleReference): void
+        @write "require(" // TODO: check if this is correct. i have never seen this syntax before.
+        @node node.expression
+        @write ")"
+
+    moduleSpecifier(node: Node): void
+        if node.kind is SyntaxKind.StringLiteral
+            // write string literal without quotes
+            @write (node as StringLiteral).text
+        else
+            @node node
+
     [SyntaxKind.ImportDeclaration](node: ImportDeclaration): void
+        if node.modifiers?
+            @modifiers node.modifiers
+
+        if node.importClause?
+            @node node.importClause
+            @write " from "
+        else
+            @write "import "
+
+        @moduleSpecifier node.moduleSpecifier
+        @newLine()
+
     [SyntaxKind.ImportClause](node: ImportClause): void
+        if node.isTypeOnly
+            @write "type "
+        if node.name?
+            @node node.name
+        if node.name? and node.namedBindings?
+            @write ", "
+        if node.namedBindings?
+            @node node.namedBindings
+
     [SyntaxKind.AssertEntry](node: AssertEntry): void
+        @node node.name
+        @write ": "
+        @node node.value
+
     [SyntaxKind.AssertClause](node: AssertClause): void
+        @write "assert" // civet might change this back to `with` in the future. who knows.
+        if node.multiLine
+            @newLine()
+            @indent : void =>
+                for entry of node.elements
+                    @node entry
+                    @newLine()
+        else
+            @write " "
+            @nodeArray node.elements
+
     [SyntaxKind.NamespaceImport](node: NamespaceImport): void
+        @write "* as "
+        @node node.name
+
     [SyntaxKind.NamespaceExport](node: NamespaceExport): void
+        @write "* as "
+        @node node.name
+
     [SyntaxKind.NamespaceExportDeclaration](node: NamespaceExportDeclaration): void
+        @write "export as namespace "
+        @node node.name
+
     [SyntaxKind.ExportDeclaration](node: ExportDeclaration): void
+        if node.modifiers?
+            @modifiers node.modifiers
+        @write "export "
+        if node.isTypeOnly
+            @write "type "
+        if node.exportClause?
+            @node node.exportClause
+        else
+            @write "*"
+        if node.moduleSpecifier?
+            @write " from "
+            @moduleSpecifier node.moduleSpecifier
+
+        if node.assertClause?
+            @write " "
+            @node node.assertClause
+        @newLine()
+
     [SyntaxKind.NamedImports](node: NamedImports): void
+        @write "{ "
+        if node.elements.length > 0
+            @node node.elements[0]
+        for element of node.elements[1..]
+            @write ", "
+            @node element
+        @write " }"
+
     [SyntaxKind.NamedExports](node: NamedExports): void
+        @nodeArray node.elements
+
     [SyntaxKind.ImportSpecifier](node: ImportSpecifier): void
+        if node.isTypeOnly
+            @write "type "
+        if node.propertyName?
+            @write ": " // TODO: option to keep this as `as`
+            @node node.propertyName
+        @node node.name
+
     [SyntaxKind.ExportSpecifier](node: ExportSpecifier): void
+        if node.propertyName?
+            @node node.propertyName
+            @write " as " // can't be :, `export x: b` => `export var x: b`
+        @node node.name
+
     [SyntaxKind.ExportAssignment](node: ExportAssignment): void
+        @write "export "
+        @write if node.isExportEquals then "= " else "default "
+
     [SyntaxKind.JSDocTypeExpression](node: JSDocTypeExpression): void
     [SyntaxKind.JSDocNameReference](node: JSDocNameReference): void
     [SyntaxKind.JSDocMemberName](node: JSDocMemberName): void

@@ -9,6 +9,12 @@ This makes supporting new features more difficult, but it allows much more in-de
 
 also adds some (unused) testing infrastructure.
 
+TODO:
+
+- [ ] variable declarations
+- [ ] comments 
+- [ ] fix tests
+
 ## CLI
 
 ```bash

@@ -4,7 +4,7 @@
 { describe, it } from node:test
 { setOptions } from ./_utils.civet
 
-files := await glob "./**/*.civet", cwd: dirname fileURLToPath import.meta.url
+files := await glob "./**/*.civet", dotRelative: true, cwd: dirname fileURLToPath import.meta.url
 ignored := ["_run.civet", "_utils.civet"]
 
 for file of files
