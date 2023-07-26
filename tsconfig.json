@@ -7,8 +7,6 @@
 		"forceConsistentCasingInFileNames": true,
 		"strict": true,
 		"skipLibCheck": true,
-		"allowJs": true,
-		"checkJs": true,
 		"allowSyntheticDefaultImports": false,
 		"jsx": "preserve",
 		"esModuleInterop": false,

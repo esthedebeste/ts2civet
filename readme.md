@@ -1,7 +1,8 @@
 # ts2civet
 
 
-Converts [TypeScript](https://www.typescriptlang.org/) code to [civet](https://civet.dev/).
+Converts [TypeScript](https://www.typescriptlang.org/) code to _concise_ [civet](https://civet.dev/).
+
 ## <span style="color: red;">WIP fork: unstable, unusable, unfinished, untested, etc.</span>
 
 This branch switches from parsing & text modifications to a full re-emit of the AST.  
@@ -11,8 +12,8 @@ also adds some (unused) testing infrastructure.
 
 TODO:
 
-- [ ] variable declarations
-- [ ] comments 
+- [x] variable declarations
+- [x] comments 
 - [ ] fix tests
 
 ## CLI

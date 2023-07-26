@@ -8,7 +8,7 @@ defaultOpts := { filename: "./code.tsx" } as const
 export options: Options .= { ...defaultOpts }
 
 function transforms(source: string)
-    transform source, options.filename ?? "./code.tsx", { +noHeader, ...options }
+    transform source, options.filename ?? "./code.tsx", { -header, ...options }
 
 export operator becomes(source: string, output: string)
     transforms source |> & equal output

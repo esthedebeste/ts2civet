@@ -10,6 +10,7 @@ cli := meow """
     Options
       --help            Show this help message
       --version         Show version
+      --(no-)header     Add a ts2civet header to the output (default: true)
       --output, -o      Output file. '-' for stdout, '.' to replace the extension with .civet (default)
 
     Examples
@@ -34,6 +35,9 @@ cli := meow """
         version:
             type: "boolean"
             default: false
+        header:
+            type: "boolean"
+            default: true
         output:
             type: "string"
             shortFlag: "o"
@@ -44,7 +48,7 @@ cli := meow """
 if cli.flags.version then cli.showVersion()
 if cli.flags.help or cli.input.length is 0 then cli.showHelp()
 
-cli.input = (await.all cli.input.map (pattern) -> glob pattern).flat()
+cli.input = (await.all cli.input.map (pattern) => glob pattern).flat()
 
 if cli.flags.output.length is not 0 and cli.flags.output.length is not cli.input.length
     console.error "Number of output files must match number of input files, or be omitted."
