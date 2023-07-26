@@ -462,30 +462,38 @@ enum Direction {
 	Right = 2 * Left,
 }
 export { a, b, c } from "./cool.js"
-<>
-	<div foo={foo}>Civet</div>
-	<div name={props.name}>Civet</div>
-	<div data={data()}>Civet</div>
-</>
-;<>
-	<div foo>Civet</div>
-	<div data={data()}>Civet</div>
-	<div name={this.name}>Civet</div>
-	<div onClick={this.onClick.bind(this)}>Civet</div>
-	<div onClick={modal.onClick.bind(modal)}>Civet</div>
-	<div name={props.name} value={props.value}>
+const JSX = (
+	<>
+		<div foo={foo}>Civet</div>
+		<div name={props.name}>Civet</div>
+		<div data={data()}>Civet</div>
+	</>
+)
+const JSX = (
+	<>
+		<div foo>Civet</div>
+		<div data={data()}>Civet</div>
+		<div name={this.name}>Civet</div>
+		<div onClick={this.onClick.bind(this)}>Civet</div>
+		<div onClick={modal.onClick.bind(modal)}>Civet</div>
+		<div name={props.name} value={props.value}>
+			Civet
+		</div>
+		<div {...foo}>Civet</div>
+	</>
+)
+const JSX = (
+	<>
+		<div {...{ [expr]: value }}>Civet</div>
+		<div {...{ [`data-${key}`]: value }}>Civet</div>
+	</>
+)
+const JSX = (
+	<div>
+		{/* Comment */}
 		Civet
 	</div>
-	<div {...foo}>Civet</div>
-</>
-;<>
-	<div {...{ [expr]: value }}>Civet</div>
-	<div {...{ [`data-${key}`]: value }}>Civet</div>
-</>
-;<div>
-	{/* Comment */}
-	Civet
-</div>
+)
 const _RET = (
 	<>
 		<div>Hello {name}!</div>
@@ -498,12 +506,14 @@ const _RET = (
 		<div>Body</div>
 	</>
 )
-;[<h1>Hello World!</h1>, <div>Body</div>]
-;<For each={items()}>
-	{item => {
-		const _RET = <li>{item}</li>
-	}}
-</For>
+const JSX = [<h1>Hello World!</h1>, <div>Body</div>]
+const JSX = (
+	<For each={items()}>
+		{item => {
+			const _RET = <li>{item}</li>
+		}}
+	</For>
+)
 type IntrinsicElements<K extends keyof JSX.IntrinsicElements> =
 	JSX.IntrinsicElements[K] extends JSX.DOMAttributes<infer T> ? T : unknown
 const link = (<a href="https://civet.dev/">Civet</a>) as any as IntrinsicElements<"a">

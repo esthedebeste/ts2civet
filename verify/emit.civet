@@ -160,6 +160,26 @@ typeof a !== "number"
 // let xor: (a: unknown, b: unknown) => boolean = (a, b) => (a ? !b && a : b)
 // xor(a, b)
 // xor(a, b)
+// a = xor(a, b)
+// a = xor(a, b)
+// let xnor: (a: unknown, b: unknown) => boolean = (a, b) => (a ? b : !b || a)
+// xnor(a, b)
+// xnor(a, b)
+// a = xnor(a, b)
+// a = xnor(a, b)
+// let modulo: (a: number, b: number) => number = (a, b) => ((a % b) + b) % b
+// let a = -3
+// let b = 5
+// let rem = a % b
+// let mod = modulo(a, b)
+// console.log(rem, mod)
+// https://github.com/DanielXMoore/Civet/issues/579
+// let is: {
+// 	<B, A extends B>(a: A, b: B): b is A
+// 	<A, B>(a: A, b: B): a is A & B
+// } = Object.is as any
+// is(a, b)
+// !is(a, b)
 console.log Object.keys data
 (x.length + 1).toString()
 _RET := (await (await fetch url).json()((response): void => console.log response.status) (ref = await fetch url) , ((json): void => console.log "json:", json)((ref = await ref.json())) , callback(ref))
@@ -329,43 +349,45 @@ type Point =
 	x: number
 	y: number
 interface Point
-	x: numbery: number
+	x: number
+	y: number
 interface Point3D < Point
 	z: number
 interface Signal
 	listen(callback: () => void): void
 interface Node<T>
-	value: Tnext: Node<T>
+	value: T
+	next: Node<T>
 enum Direction
 	Up
 	Down
 	Left = 2 * Down
 	Right = 2 * Left
 export a, b, c from ./cool.js
-<>
-	<div foo={foo}>Civet</div>
-	<div name={props.name}>Civet</div>
-	<div data={data()}>Civet</div>
-</>
-<>
-	<div foo>Civet</div>
-	<div data={data()}>Civet</div>
-	<div name={@name}>Civet</div>
-	<div onClick={@onClick.bind(@)}>Civet</div>
-	<div onClick={modal.onClick.bind(modal)}>Civet</div>
-	<div name={props.name} value={props.value}>
+JSX := (<>
+		<div foo={foo}>Civet</div>
+		<div name={props.name}>Civet</div>
+		<div data={data()}>Civet</div>
+	</>)
+JSX := (<>
+		<div foo>Civet</div>
+		<div data={data()}>Civet</div>
+		<div name={@name}>Civet</div>
+		<div onClick={@onClick.bind(@)}>Civet</div>
+		<div onClick={modal.onClick.bind(modal)}>Civet</div>
+		<div name={props.name} value={props.value}>
+			Civet
+		</div>
+		<div ...foo>Civet</div>
+	</>)
+JSX := (<>
+		<div ...{[expr]: value}>Civet</div>
+		<div ...{[`data-${key}`]: value}>Civet</div>
+	</>)
+JSX := (<div>
+		{}
 		Civet
-	</div>
-	<div ...foo>Civet</div>
-</>
-<>
-	<div ...{[expr]: value}>Civet</div>
-	<div ...{[`data-${key}`]: value}>Civet</div>
-</>
-;<div>
-	{}
-	Civet
-</div>
+	</div>)
 _RET := (<>
 		<div>Hello {name}!</div>
 		{svg}
@@ -374,12 +396,12 @@ _RET := (<>
 		<h1>Hello World!</h1>
 		<div>Body</div>
 	</>)
-[<h1>Hello World!</h1>, <div>Body</div>]
-;<For each={items()}>
-	{(item): void => 
+JSX := [<h1>Hello World!</h1>, <div>Body</div>]
+JSX := (<For each={items()}>
+		{(item): void => 
 	_RET := <li>{item}</li>
 }
-</For>
+	</For>)
 type IntrinsicElements<K extends keyof JSX.IntrinsicElements> = JSX.IntrinsicElements[K] extends JSX.DOMAttributes<infer T> ? T : unknown
 link := (<a href="https://civet.dev/">Civet</a>) as any as IntrinsicElements<"a">
 let key

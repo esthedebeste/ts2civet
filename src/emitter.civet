@@ -55,8 +55,8 @@ export class Emitter < CodeBlockWriter
      */
     node(node: Node, ...options: NodeOptions): void
         forEachLeadingCommentRange @ast.text, node.pos, (pos: number, end: number, kind: ts.CommentKind, hasTrailingNewLine: boolean): void =>
-            if @emittedComments.has pos then return
-            @emittedComments.add pos
+            if @emittedComments.has end then return
+            @emittedComments.add end
             unless @isLastNewLine()
                 @write " "
             @write @ast.text[pos...end].trimEnd()
@@ -73,8 +73,8 @@ export class Emitter < CodeBlockWriter
             TODO node
 
         forEachTrailingCommentRange @ast.text, node.end, (pos: number, end: number, kind: ts.CommentKind, hasTrailingNewLine: boolean): void =>
-            if @emittedComments.has pos then return
-            @emittedComments.add pos
+            if @emittedComments.has end then return
+            @emittedComments.add end
             unless @isLastNewLine()
                 @write " "
             @write @ast.text[pos...end].trimEnd()

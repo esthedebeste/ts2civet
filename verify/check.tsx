@@ -172,9 +172,29 @@ typeof a !== "number"
 // let xor: (a: unknown, b: unknown) => boolean = (a, b) => (a ? !b && a : b)
 // xor(a, b)
 // xor(a, b)
+// a = xor(a, b)
+// a = xor(a, b)
+// let xnor: (a: unknown, b: unknown) => boolean = (a, b) => (a ? b : !b || a)
+// xnor(a, b)
+// xnor(a, b)
+// a = xnor(a, b)
+// a = xnor(a, b)
+// let modulo: (a: number, b: number) => number = (a, b) => ((a % b) + b) % b
+// let a = -3
+// let b = 5
+// let rem = a % b
+// let mod = modulo(a, b)
+// console.log(rem, mod)
+// https://github.com/DanielXMoore/Civet/issues/579
+// let is: {
+// 	<B, A extends B>(a: A, b: B): b is A
+// 	<A, B>(a: A, b: B): a is A & B
+// } = Object.is as any
+// is(a, b)
+// !is(a, b)
 console.log(Object.keys(data))
 ;(x.length + 1).toString()
-const _RET = await (await fetch(url)).json()((response): void => console.log(response.status))(
+const _RET = await(await fetch(url)).json()((response): void => console.log(response.status))(
 	(ref = await fetch(url)),
 	((json): void => console.log("json:", json))((ref = await ref.json())),
 	callback(ref)
@@ -437,7 +457,8 @@ type Point = {
 	y: number
 }
 interface Point {
-	x: { numbery: number }
+	x: number
+	y: number
 }
 interface Point3D extends Point {
 	z: number
@@ -446,7 +467,8 @@ interface Signal {
 	listen(callback: () => void): void
 }
 interface Node<T> {
-	value: { Tnext: Node<T> }
+	value: T
+	next: Node<T>
 }
 enum Direction {
 	Up,
@@ -455,12 +477,14 @@ enum Direction {
 	Right = 2 * Left,
 }
 export { a, b, c } from "./cool.js"
-<>
+const JSX = (
 	<>
 		<div foo={foo}>Civet</div>
 		<div name={props.name}>Civet</div>
 		<div data={data()}>Civet</div>
 	</>
+)
+const JSX = (
 	<>
 		<div foo>Civet</div>
 		<div data={data()}>Civet</div>
@@ -472,15 +496,19 @@ export { a, b, c } from "./cool.js"
 		</div>
 		<div {...foo}>Civet</div>
 	</>
+)
+const JSX = (
 	<>
 		<div {...{ [expr]: value }}>Civet</div>
 		<div {...{ [`data-${key}`]: value }}>Civet</div>
 	</>
-</>
-;<div>
-	{}
-	Civet
-</div>
+)
+const JSX = (
+	<div>
+		{}
+		Civet
+	</div>
+)
 const _RET = (
 	<>
 		<div>Hello {name}!</div>
@@ -493,12 +521,14 @@ const _RET = (
 		<div>Body</div>
 	</>
 )
-;[<h1>Hello World!</h1>, <div>Body</div>]
-;<For each={items()}>
-	{(item): void => {
-		const _RET = <li>{item}</li>
-	}}
-</For>
+const JSX = [<h1>Hello World!</h1>, <div>Body</div>]
+const JSX = (
+	<For each={items()}>
+		{(item): void => {
+			const _RET = <li>{item}</li>
+		}}
+	</For>
+)
 type IntrinsicElements<K extends keyof JSX.IntrinsicElements> =
 	JSX.IntrinsicElements[K] extends JSX.DOMAttributes<infer T> ? T : unknown
 const link = (<a href="https://civet.dev/">Civet</a>) as any as IntrinsicElements<"a">
