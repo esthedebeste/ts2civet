@@ -1,6 +1,6 @@
 # ts2civet
 
-Converts [TypeScript](https://www.typescriptlang.org/) code to _concise_ [civet](https://civet.dev/).
+Converts [TypeScript](https://www.typescriptlang.org/) code to _concise_ [civet](https://civet.dev/). Demo at [ts2civet.esthe.win](https://ts2civet.esthe.win/)
 
 ***<span style="color: red;">WIP! Use carefully and double-check output.</span>***
 
