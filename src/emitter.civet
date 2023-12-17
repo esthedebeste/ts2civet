@@ -32,7 +32,7 @@ export class Emitter < CodeBlockWriter
         @ast = ast
 
     nl(): void
-        @newLineIfLastNot()
+        @newLineIfLastNot() if @getLength() > 0 // dont need to start with a newline
 
     controlFlowBlock(statement: Statement, ...options: NodeOptions): void
         if isBlock(statement)
