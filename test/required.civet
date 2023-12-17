@@ -4,14 +4,14 @@ export options: Options := {}
 
 export tests: Tests :=
     Labels: =>
-        "label: hello" becomes ":label hello"
-        "$: hello" becomes ":$ hello"
+        "label: hello" becomes ":label \nhello\n"
+        "$: hello" becomes ":$ \nhello\n"
 
     Arrow_Functions: =>
         "a => a" contains "(a) => a"
         "(a) => a" contains "(a) => a"
-        "a => { return a }" contains "(a) => { return a }"
-        "(a) => { return a }" contains "(a) => { return a }"
+        "a => { return a }" contains "(a) =>\n\treturn a"
+        "(a) => { return a }" contains "(a) =>\n\treturn a"
 
     Decorators: =>
         """
@@ -21,10 +21,9 @@ export tests: Tests :=
             drink() {}
         }
         """ contains """
-        @@Object.seal
-        class Civet {
-            @@stuff
-            drink() {}
-        }
+        \n@@Object.seal
+        class Civet
+        \t@@stuff
+        \tdrink(): void
         """
 

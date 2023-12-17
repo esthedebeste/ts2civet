@@ -1,0 +1,7 @@
+{ operator becomes, operator contains, type Tests, type Options } from ./_utils.civet
+
+export options: Options := {}
+
+export tests: Tests :=
+    In_For_Loops: =>
+        "for(let i = 0, len = arr.length; i < len; i++) console.log('hi')" becomes "for let i = 0, len = arr.length; i < len; i++\n\tconsole.log 'hi'\n"

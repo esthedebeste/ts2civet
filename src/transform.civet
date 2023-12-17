@@ -1,7 +1,6 @@
 ts from typescript
 { SyntaxKind, createSourceFile } := ts
 { Emitter } from ./emitter.civet
-// This is the only file with an exported .d.ts!
 
 export interface Options
     /**

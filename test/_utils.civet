@@ -11,10 +11,11 @@ function transforms(source: string)
     transform source, options.filename ?? "./code.tsx", { -header, ...options }
 
 export operator becomes(source: string, output: string)
-    transforms source |> & equal output
+    output equal transforms source
 
 export operator contains(source: string, output: string)
-    assert output.trim() is in transforms source
+    transformed := transforms source
+    assert output.trim() is in transformed, `Expected ${output} to be in ${transformed} - (${JSON.stringify output} in ${JSON.stringify transformed})`
 
 export function setOptions(opts: Partial<Options>)
     options = { ...defaultOpts, ...opts }

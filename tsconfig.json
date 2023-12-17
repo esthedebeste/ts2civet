@@ -1,8 +1,8 @@
 {
 	"compilerOptions": {
 		"target": "ES2022",
-		"module": "ES2022",
-		"moduleResolution": "node16",
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
 		"declaration": true,
 		"forceConsistentCasingInFileNames": true,
 		"strict": true,
@@ -12,7 +12,7 @@
 		"esModuleInterop": false,
 		"rootDir": "./dist/ts",
 		"outDir": "./dist",
-		"resolvePackageJsonExports": true
+		"resolvePackageJsonExports": true,
 	},
 	"include": ["./dist/ts/**/*.ts", "./src/**/*.civet"],
 	"exclude": ["./dist/**/*.js"]

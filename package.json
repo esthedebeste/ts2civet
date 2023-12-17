@@ -26,19 +26,18 @@
 	"license": "MIT",
 	"dependencies": {
 		"code-block-writer": "^12.0.0",
-		"glob": "^10.2.6",
-		"meow": "^12.0.1",
-		"typescript": "^5.1.6"
+		"glob": "^10.3.10",
+		"meow": "^12.1.1",
+		"typescript": "^5.3.3"
 	},
 	"devDependencies": {
-		"@danielx/civet": "^0.6.13",
-		"@types/node": "^20.2.3",
-		"@types/prettier": "^2.7.3",
-		"prettier": "^2.8.8"
+		"@danielx/civet": "^0.6.56",
+		"@types/node": "^20.10.4",
+		"@types/prettier": "^3.0.0",
+		"prettier": "^3.1.1"
 	},
 	"files": [
-		"dist/*.js",
-		"dist/transform.d.ts"
+		"dist/*.js"
 	],
 	"type": "module",
 	"pnpm": {

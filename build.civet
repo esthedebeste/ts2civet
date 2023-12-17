@@ -32,7 +32,7 @@ await.all files.map async (file) =>
 	console.log `Compiled ${file} to ${dest}`
 
 console.log "Starting tsc..."
-tsc := spawnSync "pnpm tsc --declaration false",
+tsc := spawnSync "pnpm tsc",
 	cwd: "."
 	shell: true
 	stdio: "inherit"
