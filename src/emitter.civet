@@ -189,7 +189,7 @@ export class Emitter < CodeBlockWriter
         newlines := node.parent.kind is not in [SyntaxKind.ForOfStatement, SyntaxKind.ForInStatement, SyntaxKind.ForStatement]
 
         if node.declarations.length is 0
-            TODO node
+            return
 
         if node.declarations.length is 1
             @nl() if newlines
@@ -212,7 +212,7 @@ export class Emitter < CodeBlockWriter
             if declaration.initializer?
                 @write " = "
                 @node declaration.initializer
-            @nl() if newlines
+        @nl() if newlines
 
     [SyntaxKind.Parameter](node: ParameterDeclaration): void
         if node.modifiers?
