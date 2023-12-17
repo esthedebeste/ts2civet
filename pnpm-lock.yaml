@@ -4,15 +4,10 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-patchedDependencies:
-  code-block-writer@12.0.0:
-    hash: yfus3imijji6ie7gszx65h5qxy
-    path: patches/code-block-writer@12.0.0.patch
-
 dependencies:
   code-block-writer:
     specifier: ^12.0.0
-    version: 12.0.0(patch_hash=yfus3imijji6ie7gszx65h5qxy)
+    version: 12.0.0
   glob:
     specifier: ^10.3.10
     version: 10.3.10
@@ -190,10 +185,9 @@ packages:
       fsevents: 2.3.3
     dev: true
 
-  /code-block-writer@12.0.0(patch_hash=yfus3imijji6ie7gszx65h5qxy):
+  /code-block-writer@12.0.0:
     resolution: {integrity: sha512-q4dMFMlXtKR3XNBHyMHt/3pwYNA69EDk00lloMOaaUMKPUXBw6lpXtbu3MMVG6/uOihGnRDOlkyqsONEUj60+w==}
     dev: false
-    patched: true
 
   /color-convert@2.0.1:
     resolution: {integrity: sha512-RRECPsj7iu/xb5oKYcsFHSppFNnsj/52OVTRKb4zP5onXwVF3zVmmToNcOfGC+CRDpfK/U584fMg38ZHCaElKQ==}

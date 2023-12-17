@@ -1,6 +1,6 @@
 {
 	"name": "ts2civet",
-	"version": "1.0.0-beta.1",
+	"version": "1.0.0-beta.2",
 	"description": "Converts typescript code to civet code",
 	"main": "dist/cli.js",
 	"bin": {
@@ -39,10 +39,5 @@
 	"files": [
 		"dist"
 	],
-	"type": "module",
-	"pnpm": {
-		"patchedDependencies": {
-			"code-block-writer@12.0.0": "patches/code-block-writer@12.0.0.patch"
-		}
-	}
+	"type": "module"
 }
