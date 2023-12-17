@@ -1,20 +1,19 @@
 {
 	"compilerOptions": {
-		"target": "esnext",
-		"module": "node16",
-		"moduleResolution": "node16",
+		"target": "ES2022",
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
 		"declaration": true,
 		"forceConsistentCasingInFileNames": true,
 		"strict": true,
 		"skipLibCheck": true,
-		"allowJs": true,
-		"checkJs": true,
+		"allowSyntheticDefaultImports": true,
 		"jsx": "preserve",
 		"esModuleInterop": false,
-		"allowSyntheticDefaultImports": false,
 		"rootDir": "./dist/ts",
-		"outDir": "./dist"
+		"outDir": "./dist",
+		"resolvePackageJsonExports": true,
 	},
-	"include": ["./dist/ts/**/*.ts"],
+	"include": ["./dist/ts/**/*.ts", "./src/**/*.civet"],
 	"exclude": ["./dist/**/*.js"]
 }

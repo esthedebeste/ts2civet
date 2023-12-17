@@ -3,17 +3,19 @@
 { spawnSync } from node:child_process
 { mkdir, readFile, rm, writeFile, stat } from node:fs/promises
 { join, relative } from node:path
+config from ./config.civet
 
 files := await glob "./src/**/*.civet"
 
 dev := process.argv.includes "--dev" // dev build
 longest := Math.max ...files.map .length
 
+await mkdir "./dist", recursive: true
 unless dev then await rm "./dist", recursive: true
 
 await.all files.map async (file) =>
 	rel := relative "src", file
-	dest := join(if dev then "./dist" else "./dist/ts/", rel).replace /\.civet$/, if dev then ".js" else ".ts"
+	dest := join("./dist/ts/", rel).replace /\.civet$/, ".ts"
 	if dev // on full build, just compile everything. on dev build, only compile if changed.
 		try // if dest doesn't exist, stat will throw
 			srcStat := await stat file
@@ -23,23 +25,25 @@ await.all files.map async (file) =>
 				return // skip if dest is newer than src
 	src := await readFile file, "utf8"
 	ts := civet
-		.compile src, filename: file, js: dev
+		.compile src, { filename: file, config.parseOptions }
 		.replaceAll /from "(.*)\.civet"/g, 'from "$1.js"'
 	await mkdir join(dest, ".."), recursive: true
 	await writeFile dest, ts
 	console.log `Compiled ${file} to ${dest}`
 
-unless dev
-	console.log "Starting tsc..."
-	tsc := spawnSync "pnpm tsc",
-		cwd: "."
-		shell: true
-		stdio: "inherit"
+console.log "Starting tsc..."
+tsc := spawnSync "pnpm tsc",
+	cwd: "."
+	shell: true
+	stdio: "inherit"
 
-	if tsc.error then throw tsc.error
-	if tsc.status is not 0 then throw new Error `tsc failed with status ${tsc.status}`
-	console.log `Compiled w/ tsc, status: ${tsc.status}`
+if tsc.error then throw tsc.error
+if tsc.status is not 0 then throw new Error `tsc failed with status ${tsc.status}`
+console.log `Compiled w/ tsc, status: ${tsc.status}`
+unless dev
 	await rm "./dist/ts",  recursive: true
+
+unless dev // don't prettier dev builds
 	spawnSync "pnpm prettier -w ./dist/**",
 		cwd: "."
 		shell: true

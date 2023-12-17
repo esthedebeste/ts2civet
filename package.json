@@ -1,6 +1,6 @@
 {
 	"name": "ts2civet",
-	"version": "0.1.0",
+	"version": "1.0.0-beta.3",
 	"description": "Converts typescript code to civet code",
 	"main": "dist/cli.js",
 	"bin": {
@@ -14,7 +14,9 @@
 	"scripts": {
 		"build": "civet ./build.civet",
 		"prepare": "civet ./build.civet",
-		"start": "civet ./build.civet --dev && node ./dist/cli.js"
+		"start": "civet ./build.civet --dev && node ./dist/cli.js",
+		"verify": "civet ./build.civet --dev && node ./dist/cli.js --no-header ./verify/pre.tsx -o ./verify/emit.civet && civet -c ./verify/emit.civet -o ./verify/check.tsx && civet ./scripts/ts-ast.civet ./verify/pre.tsx ./verify/check.tsx && diff ./verify/pre.tsx.json ./verify/check.tsx.json > ./verify/ast-diff.json.diff && echo && echo Same AST!",
+		"test": "node --loader @danielx/civet/esm --test test/_run.civet"
 	},
 	"keywords": [
 		"typescript",
@@ -23,24 +25,19 @@
 	"author": "esthedebeste",
 	"license": "MIT",
 	"dependencies": {
-		"@typescript-eslint/typescript-estree": "^5.59.7",
-		"glob": "^10.2.6",
-		"magic-string": "^0.30.0",
-		"meow": "^12.0.1",
-		"typescript": "^5.0.4"
+		"code-block-writer": "^12.0.0",
+		"glob": "^10.3.10",
+		"meow": "^12.1.1",
+		"typescript": "^5.3.3"
 	},
 	"devDependencies": {
-		"@danielx/civet": "^0.6.2",
-		"@types/node": "^20.2.3",
-		"prettier": "^2.8.8"
+		"@danielx/civet": "^0.6.56",
+		"@types/node": "^20.10.4",
+		"@types/prettier": "^3.0.0",
+		"prettier": "^3.1.1"
 	},
 	"files": [
 		"dist"
 	],
-	"type": "module",
-	"pnpm": {
-		"patchedDependencies": {
-			"magic-string@0.30.0": "patches/magic-string@0.30.0.patch"
-		}
-	}
+	"type": "module"
 }

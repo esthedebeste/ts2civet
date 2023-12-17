@@ -1,0 +1,17 @@
+ts from typescript
+{ createSourceFile } := ts
+{ readFile, writeFile } from node:fs/promises
+* as prettier from prettier
+[runner, script, ...inputs] := process.argv
+if inputs.length is 0
+  console.error `Usage: ${runner} ${script} [...input.ts]`
+  process.exit 1
+await.all inputs.map (input) =>
+  tscode .= await readFile input, 'utf8'
+  tscode = prettier.format tscode, parser: 'typescript', semi: false
+  output := `${input}.json`
+  sourceFile := createSourceFile input, tscode, ts.ScriptTarget.Latest, false
+  delete sourceFile.text // don't compare this
+  delete sourceFile.fileName // don't compare this
+  await writeFile output, JSON.stringify sourceFile, (key, value) => if key is in ["pos", "end", "jsDoc"] then undefined else value, 2
+  console.log `Wrote ${output}`

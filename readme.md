@@ -1,6 +1,20 @@
 # ts2civet
 
-Converts [TypeScript](https://www.typescriptlang.org/) code to [civet](https://civet.dev/).
+
+Converts [TypeScript](https://www.typescriptlang.org/) code to _concise_ [civet](https://civet.dev/).
+
+## <span style="color: red;">WIP fork: unstable, unusable, unfinished, untested, etc.</span>
+
+This branch switches from parsing & text modifications to a full re-emit of the AST.  
+This makes supporting new features more difficult, but it allows much more in-depth transformations.  
+
+also adds some (unused) testing infrastructure.
+
+TODO:
+
+- [x] variable declarations
+- [x] comments 
+- [ ] fix tests
 
 ## CLI
 
@@ -16,9 +30,6 @@ $ ts2civet src/**/*.ts
 > Transformed src/b.ts to src/b.civet
 > Transformed src/folder/file.ts to src/folder/file.civet
 
-$ ts2civet src/index.ts -t decl -t import
-> Transformed src/index.ts to src/index.civet
-
 $ ts2civet src/index.ts -o-
 > console.log "Hello, world!"
 
@@ -32,7 +43,5 @@ $ ts2civet src/a.ts -o src/civety-a.civet src/b.ts -o. src/import.ts -o-
 
 ```ts
 import { transform } from "ts2civet"
-const code = transform('console.log("Hello, world!")', "./code.ts", {
-	transform: "all",
-}) // console.log "Hello, world!"
+const code = transform('console.log("Hello, world!")', "./code.ts") // console.log "Hello, world!"
 ```
