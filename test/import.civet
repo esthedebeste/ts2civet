@@ -1,0 +1,12 @@
+{ operator becomes, operator contains, type Tests, type Options } from ./_utils.civet
+
+export options: Options := {}
+export tests: Tests :=
+    Bald:        => "import './stuff'" becomes "import ./stuff\n"
+    Default:     => "import s from './stuff'" becomes "s from ./stuff\n"
+    Named:       => "import { s } from './stuff'" becomes "{ s } from ./stuff\n"
+    NamedAs:     => "import { s as t } from './stuff'" becomes "{ s: t } from ./stuff\n"
+    Namespace:   => "import * as s from './stuff'" becomes "* as s from ./stuff\n"
+    TypeGroup:   => "import type { s } from './stuff'" becomes "type { s } from ./stuff\n"
+    TypeGroupAs: => "import type { s as t } from './stuff'" becomes "type { s: t } from ./stuff\n"
+    Mixed:       => "import s, { t as u, type f as k } from './stuff'" becomes "s, { t: u, type f: k } from ./stuff\n"

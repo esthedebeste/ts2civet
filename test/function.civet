@@ -1,0 +1,20 @@
+{ operator becomes, operator contains, type Tests, type Options } from ./_utils.civet
+
+export options: Options := {}
+
+export tests: Tests :=
+    FunctionStatementNoop: => "function hi() {}" becomes "function hi: void"
+    FunctionExpression: => "const x = function(){}" becomes "x := function: void"
+    ConstructorDeclaration: => "class X { constructor() {} }" becomes "class X\n\t@()"
+    MethodDeclaration: => "class X { method() {} }" becomes "class X\n\tmethod(): void"
+    MethodSignature: => "class X { method(): void }" becomes "class X\n\tmethod(): void"
+    GetAccessor: => "class X { get getter() {} }" becomes "class X\n\tget getter(): void"
+    SetAccessor: => "class X { set setter() {} }" becomes "class X\n\tset setter(): void"
+    LambdaExpression: => "const x = () => 3" becomes "x := => 3"
+    FunctionType: =>
+        "const x: () => void" becomes "const x: => void"
+        "const x: (a: number) => void" becomes "const x: (a: number) => void"
+        "const x: <T>(a: T) => void" becomes "const x: <T>(a: T) => void"
+    ConstructorType: => "const x: new () => void" becomes "const x: new => void"
+    InterfaceCallSignature: => "interface X { (): void }" becomes "interface X\n\t(): void"
+    InterfaceConstructSignature: => "interface X { new (): void }" becomes "interface X\n\tnew (): void"

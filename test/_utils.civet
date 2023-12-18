@@ -11,7 +11,7 @@ function transforms(source: string)
     transform source, options.filename ?? "./code.tsx", { -header, ...options }
 
 export operator becomes(source: string, output: string)
-    output equal transforms source
+    transforms source |> &.trim() equal output.trim()
 
 export operator contains(source: string, output: string)
     transformed := transforms source

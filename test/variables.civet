@@ -3,5 +3,19 @@
 export options: Options := {}
 
 export tests: Tests :=
-    In_For_Loops: =>
-        "for(let i = 0, len = arr.length; i < len; i++) console.log('hi')" becomes "for let i = 0, len = arr.length; i < len; i++\n\tconsole.log 'hi'\n"
+    Basic: =>
+        "const a = 1" becomes "a := 1"
+        "let a = 1" becomes "a .= 1"
+        "var a = 1" becomes "var a = 1"
+    Typed: =>
+        "const a: number = 1" becomes "a: number := 1"
+        "let a: number = 1" becomes "a: number .= 1"
+        "var a: number = 1" becomes "var a: number = 1"
+    Multiple: =>
+        "const a = 1, b = 2" becomes "const a = 1, \n\tb = 2"
+        "let a = 1, b = 2" becomes "let a = 1, \n\tb = 2"
+        "var a = 1, b = 2" becomes "var a = 1, \n\tb = 2"
+    Multiple_Typed: =>
+        "const a: number = 1, b: string = 'b'" becomes "const a: number = 1, \n\tb: string = 'b'"
+        "let a: number = 1, b: string = 'b'" becomes "let a: number = 1, \n\tb: string = 'b'"
+        "var a: number = 1, b: string = 'b'" becomes "var a: number = 1, \n\tb: string = 'b'"

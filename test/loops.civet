@@ -1,0 +1,20 @@
+{ operator becomes, operator contains, type Tests, type Options } from ./_utils.civet
+
+export options: Options := {}
+
+export tests: Tests :=
+    Indexed: =>
+        "for(let i = 0; i < 10; i++) {}" becomes "for i .= 0; i < 10; i++"
+    Indexed_Multiple: =>
+        "for(let i = 0, j = 0; i < 10; i++) {}" becomes "for let i = 0, j = 0; i < 10; i++"
+    ForIn: =>
+        "for(const key in object) {}" becomes "for const key in object"
+    ForOf: =>
+        "for(const value of array) {}" becomes "for const value of array"
+    ForOf_Async: =>
+        "for await(const value of array) {}" becomes "for await const value of array"
+
+    While: =>
+        "while(condition) {}" becomes "while condition"
+    DoWhile: =>
+        "do {} while(condition)" becomes "do\nwhile condition"

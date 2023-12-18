@@ -121,18 +121,15 @@ export class Emitter < CodeBlockWriter
                 @write separator
             @node node
 
+    // callable types - used for CallSignature, ConstructSignature, MethodSignature, FunctionType, and ConstructorType
     signatureDeclaration(node: SignatureDeclaration): void
         if "modifiers" in node and node.modifiers?
             @modifiers node.modifiers
 
-        if node.kind is SyntaxKind.ConstructorType
+        if node.kind is in [SyntaxKind.ConstructorType, SyntaxKind.ConstructSignature]
             @write "new "
-        else if node.kind is SyntaxKind.FunctionDeclaration or node.kind is SyntaxKind.FunctionExpression
-            @write "function "
 
-        if node.kind is SyntaxKind.ConstructorType
-            @write "@"
-        else if node.name?
+        if node.name?
             @node node.name
 
         if node.typeParameters?
@@ -140,12 +137,16 @@ export class Emitter < CodeBlockWriter
             @nodeArray node.typeParameters
             @write ">"
 
-        @write "("
-        @nodeArray node.parameters
-        @write ")"
+        if node.parameters.length > 0
+            @write "("
+            @nodeArray node.parameters
+            @write ")"
+        else if node.kind is not in [SyntaxKind.FunctionType, SyntaxKind.ConstructorType]
+            @write "()"
 
-        if node.kind is SyntaxKind.FunctionType
-            @write " => "
+        if node.kind is SyntaxKind.FunctionType or node.kind is SyntaxKind.ConstructorType
+            @write " " if node.parameters.length > 0
+            @write "=> "
             @node node.type
         else if node.type?
             @write ": "
@@ -155,13 +156,12 @@ export class Emitter < CodeBlockWriter
         @signatureDeclaration node
 
     [SyntaxKind.ConstructSignature](node: ConstructSignatureDeclaration): void
-        @write "new "
         @signatureDeclaration node
 
     [SyntaxKind.VariableDeclaration](node: VariableDeclaration): void
         // TODO: What's VariableDeclaration.exclamationToken?
         decl := if node.parent.flags & NodeFlags.Const then "const" else if node.parent.flags & NodeFlags.Let then "let" else "var"
-        if node.initializer? and decl is not "var" and not (node.parent.kind is SyntaxKind.VariableDeclarationList and node.parent.declarations.length > 1)
+        if node.initializer? and decl is not "var"
             @node node.name
             if node.type?
                 @write ": "
@@ -189,7 +189,7 @@ export class Emitter < CodeBlockWriter
         newlines := node.parent.kind is not in [SyntaxKind.ForOfStatement, SyntaxKind.ForInStatement, SyntaxKind.ForStatement]
 
         if node.declarations.length is 0
-            return
+            return // typescript parses like this if the input file is simply "const;"
 
         if node.declarations.length is 1
             @nl() if newlines
@@ -204,7 +204,9 @@ export class Emitter < CodeBlockWriter
         for declaration, index of node.declarations
             if index > 0
                 @write ", "
-                @nl() if newlines
+                if newlines
+                    @nl()
+                    @indent(1)
             @node declaration.name
             if declaration.type?
                 @write ": "
@@ -294,7 +296,8 @@ export class Emitter < CodeBlockWriter
             @write "*"
 
         if node.kind is SyntaxKind.FunctionDeclaration or node.kind is SyntaxKind.FunctionExpression
-            @write "function "
+            @write "function"
+            @write " " if node.name?
 
         if node.kind is SyntaxKind.Constructor
             @write "@"
@@ -317,7 +320,7 @@ export class Emitter < CodeBlockWriter
         if node.type?
             @write ": "
             @node node.type
-        else
+        else if node.kind is not SyntaxKind.Constructor
             hasReturnValue .= node.kind is SyntaxKind.ArrowFunction and node.body.kind is not SyntaxKind.Block
             // TODO: is this the correct function to use? does it recurse? will it recurse into arrow functions? etc.
             if node.body and not hasReturnValue
@@ -889,7 +892,7 @@ export class Emitter < CodeBlockWriter
 
     [SyntaxKind.ExpressionStatement](node: ExpressionStatement): void
         @nl()
-        @write ";" if node.expression.kind is in [SyntaxKind.ParenthesizedExpression]
+        @write ";" if node.expression.kind is in [SyntaxKind.ParenthesizedExpression, SyntaxKind.ArrayLiteralExpression]
         @node node.expression
         @nl()
 
@@ -997,7 +1000,6 @@ export class Emitter < CodeBlockWriter
 
     [SyntaxKind.CaseClause](node: CaseClause): void
         @nl()
-        // TODO: add `when` for auto-break
         firstStatement := node.statements[0]
         useWhen := node.statements.length is 1 and isBlock(firstStatement) and firstStatement.statements.-1?.kind is SyntaxKind.BreakStatement or node.statements.-1?.kind is SyntaxKind.BreakStatement // this last one is a pretty aggressive transform, it doesn't 1:1 transform the code. maybe feature flag?
         @write if useWhen then "when " else "case "
@@ -1019,10 +1021,12 @@ export class Emitter < CodeBlockWriter
                 @controlFlowBlock statement
 
     [SyntaxKind.LabeledStatement](node: LabeledStatement): void
+        @nl()
         @write ":"
         @node node.label
         @write " "
         @node node.statement
+        @nl()
 
     [SyntaxKind.ThrowStatement](node: ThrowStatement): void
         @nl()
@@ -1198,15 +1202,16 @@ export class Emitter < CodeBlockWriter
         if node.namedBindings?
             @node node.namedBindings
 
-    [SyntaxKind.AssertEntry](node: AssertEntry): void
+    [SyntaxKind.ImportAttribute](node: AssertEntry): void
         @node node.name
         @write ": "
         @node node.value
 
-    [SyntaxKind.AssertClause](node: AssertClause): void
-        @write "assert" // civet might change this back to `with` in the future. who knows.
+    [SyntaxKind.ImportAttributes](node: AssertClause): void
+        @write "with"
         if node.multiLine
             @nl()
+            @indent()
             @indent : void =>
                 for entry of node.elements
                     @node entry
@@ -1263,8 +1268,8 @@ export class Emitter < CodeBlockWriter
         if node.isTypeOnly
             @write "type "
         if node.propertyName?
-            @write ": " // TODO: option to keep this as `as`
             @node node.propertyName
+            @write ": " // TODO: option to keep this as `as`
         @node node.name
 
     [SyntaxKind.ExportSpecifier](node: ExportSpecifier): void
@@ -1336,5 +1341,3 @@ export class Emitter < CodeBlockWriter
     [SyntaxKind.UnparsedText](node: UnparsedTextLike): void TODO node
     [SyntaxKind.UnparsedSyntheticReference](node: UnparsedSyntheticReference): void TODO node
     [SyntaxKind.SyntaxList](node: SyntaxList): void TODO node
-
-Emitter.prototype.nl = Emitter.prototype.newLineIfLastNot // slight optimization to decrease function calls

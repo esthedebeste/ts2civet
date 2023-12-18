@@ -16,7 +16,7 @@
 		"prepare": "civet ./build.civet",
 		"start": "civet ./build.civet --dev && node ./dist/cli.js",
 		"verify": "civet ./build.civet --dev && node ./dist/cli.js --no-header ./verify/pre.tsx -o ./verify/emit.civet && civet -c ./verify/emit.civet -o ./verify/check.tsx && civet ./scripts/ts-ast.civet ./verify/pre.tsx ./verify/check.tsx && diff ./verify/pre.tsx.json ./verify/check.tsx.json > ./verify/ast-diff.json.diff && echo && echo Same AST!",
-		"test": "node --loader @danielx/civet/esm --test test/_run.civet"
+		"test": "c8 node --loader @danielx/civet/esm --test test/_run.civet"
 	},
 	"keywords": [
 		"typescript",
@@ -34,10 +34,24 @@
 		"@danielx/civet": "^0.6.56",
 		"@types/node": "^20.10.4",
 		"@types/prettier": "^3.0.0",
+		"c8": "^8.0.1",
 		"prettier": "^3.1.1"
 	},
 	"files": [
 		"dist"
 	],
+	"c8": {
+		"all": true,
+		"reporter": [
+			"lcov",
+			"text"
+		],
+		"extension": [
+			".civet"
+		],
+		"include": [
+			"src"
+		]
+	},
 	"type": "module"
 }

@@ -27,3 +27,4 @@ export tests: Tests :=
         \tdrink(): void
         """
 
+    Ternary: => "a ? b : c" contains "if a then b else c"

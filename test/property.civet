@@ -1,0 +1,10 @@
+{ operator becomes, operator contains, type Tests, type Options } from ./_utils.civet
+
+export options: Options := {}
+
+export tests: Tests :=
+    // not sure how to test SyntaxKind.QualifiedName
+    PropertyAccess: => "ns.thing" becomes "ns.thing"
+    PropertyAccessQuestionDot: => "ns?.thing" becomes "ns?.thing"
+    ThisAccess: => "this.thing" becomes "@thing"
+    ThisAccessQuestionDot: => "this?.thing" becomes "@?.thing"

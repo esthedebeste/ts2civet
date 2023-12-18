@@ -1,0 +1,6 @@
+{ operator becomes, operator contains, type Tests, type Options } from ./_utils.civet
+
+export options: Options := {}
+
+export tests: Tests :=
+    Dummy_Test: => "" becomes "",
