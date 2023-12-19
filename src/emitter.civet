@@ -159,7 +159,6 @@ export class Emitter < CodeBlockWriter
         @signatureDeclaration node
 
     [SyntaxKind.VariableDeclaration](node: VariableDeclaration): void
-        // TODO: What's VariableDeclaration.exclamationToken?
         decl := if node.parent.flags & NodeFlags.Const then "const" else if node.parent.flags & NodeFlags.Let then "let" else "var"
         if node.initializer? and decl is not "var"
             @node node.name
@@ -175,9 +174,12 @@ export class Emitter < CodeBlockWriter
             @node node.initializer
             return
 
-        @write decl
-        @write " "
+        unless node.parent.kind is SyntaxKind.CatchClause or (node.parent.parent.kind is in [SyntaxKind.ForInStatement, SyntaxKind.ForOfStatement] and decl is "const")
+            @write decl
+            @write " "
         @node node.name
+        if node.exclamationToken?
+            @write "!"
         if node.type?
             @write ": "
             @node node.type
@@ -292,12 +294,15 @@ export class Emitter < CodeBlockWriter
     functionLikeDeclaration(node: FunctionLikeDeclaration): void
         if node.modifiers?
             @modifiers node.modifiers
-        if node.asteriskToken?
-            @write "*"
 
         if node.kind is SyntaxKind.FunctionDeclaration or node.kind is SyntaxKind.FunctionExpression
             @write "function"
+            if node.asteriskToken?
+                @write "*"
             @write " " if node.name?
+        else if node.asteriskToken?
+            @write "*"
+
 
         if node.kind is SyntaxKind.Constructor
             @write "@"
@@ -305,7 +310,7 @@ export class Emitter < CodeBlockWriter
             @node node.name
 
         if node.questionToken?
-            @write "?"
+            @write "?" // for example: `foo?() {}` method
         if node.typeParameters?
             @write "<"
             @nodeArray node.typeParameters
@@ -320,7 +325,8 @@ export class Emitter < CodeBlockWriter
         if node.type?
             @write ": "
             @node node.type
-        else if node.kind is not SyntaxKind.Constructor
+        else if node.kind is not SyntaxKind.Constructor and !node.asteriskToken?
+            // constructors and generators never return void
             hasReturnValue .= node.kind is SyntaxKind.ArrowFunction and node.body.kind is not SyntaxKind.Block
             // TODO: is this the correct function to use? does it recurse? will it recurse into arrow functions? etc.
             if node.body and not hasReturnValue
@@ -365,6 +371,7 @@ export class Emitter < CodeBlockWriter
         @functionLikeDeclaration node
 
     [SyntaxKind.IndexSignature](node: IndexSignatureDeclaration): void
+        TODO node // ???
         throw new Error "unsure what IndexSignatureDeclaration is"
 
     [SyntaxKind.ClassStaticBlockDeclaration](node: ClassStaticBlockDeclaration): void
@@ -592,10 +599,10 @@ export class Emitter < CodeBlockWriter
 
 
     [SyntaxKind.NumericLiteral](node: NumericLiteral): void
-        @write node.text
+        @write node.getText(@ast) // just insert original source text
 
     [SyntaxKind.BigIntLiteral](node: BigIntLiteral): void
-        @write node.text
+        @write node.getText(@ast) // just insert original source text
 
     [SyntaxKind.TemplateHead](node: TemplateHead): void
         @write "`"
@@ -902,9 +909,13 @@ export class Emitter < CodeBlockWriter
         @nl()
         @controlFlowBlock node.thenStatement
         if elseStatement := node.elseStatement
-            @write "else "
-            @nl()
-            @controlFlowBlock elseStatement
+            @write "else"
+            if elseStatement.kind is SyntaxKind.IfStatement
+                @write " "
+                @node elseStatement
+            else
+                @nl()
+                @controlFlowBlock elseStatement
 
     [SyntaxKind.DoStatement](node: DoStatement): void
         @writeLine "do"
@@ -976,6 +987,7 @@ export class Emitter < CodeBlockWriter
         @nl()
 
     [SyntaxKind.WithStatement](node: WithStatement): void
+        // https://github.com/DanielXMoore/Civet/issues/881
         @nl()
         @write "with "
         @node node.expression
@@ -1007,8 +1019,7 @@ export class Emitter < CodeBlockWriter
         @write ":"
         if node.statements.length > 0
             @nl()
-            for index of [0...node.statements.length]
-                statement := node.statements[index]
+            for statement, index of node.statements
                 if useWhen and statement.kind is SyntaxKind.BreakStatement
                     break
                 @controlFlowBlock statement, breakBreak: true
@@ -1042,15 +1053,16 @@ export class Emitter < CodeBlockWriter
             @node node.catchClause
         if node.finallyBlock? and node.finallyBlock.statements.length > 0
             @nl()
-            @write "finally "
+            @write "finally"
             @node node.finallyBlock
 
     [SyntaxKind.CatchClause](node: CatchClause): void
         if node.block.statements.length is 0
             return // do not print if empty, civet allows `try { }` without catch/finally
         @nl()
-        @write "catch "
+        @write "catch"
         if node.variableDeclaration?
+            @write " "
             @node node.variableDeclaration
         @nl()
         @node node.block

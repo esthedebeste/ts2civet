@@ -1,0 +1,19 @@
+{ operator becomes, operator contains, type Tests, type Options } from ./_utils.civet
+
+export options: Options := {}
+
+export tests: Tests :=
+    Basic: => "10" becomes "10"
+    Binary: => "0b10" becomes "0b10"
+    Octal: => "0o10" becomes "0o10"
+    Hex: => "0x10" becomes "0x10"
+    Float: =>
+        "10.0" becomes "10.0",
+        "10.0e10" becomes "10.0e10"
+    Seperator: =>
+        "10_000" becomes "10_000",
+        "10_000.0" becomes "10_000.0",
+        "10_000.0e10" becomes "10_000.0e10"
+    BigInt: =>
+        "10n" becomes "10n",
+        "10_000n" becomes "10_000n"

@@ -3,4 +3,4 @@
 export options: Options := {}
 
 export tests: Tests :=
-    Dummy_Test: => "" becomes "",
+    Dummy_Test: => "" becomes ""

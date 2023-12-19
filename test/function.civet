@@ -4,10 +4,24 @@ export options: Options := {}
 
 export tests: Tests :=
     FunctionStatementNoop: => "function hi() {}" becomes "function hi: void"
-    FunctionExpression: => "const x = function(){}" becomes "x := function: void"
+    FunctionStatement: => "function hi() { return 3 }" becomes "function hi\n\treturn 3"
+    GeneratorFunctionStatement: => "function* hi() { yield 3 }" becomes "function* hi\n\tyield 3"
+    AsyncFunctionStatement: => "async function hi() { return 3 }" becomes "async function hi\n\treturn 3"
+    AsyncGeneratorFunctionStatement: => "async function* hi() { yield 3 }" becomes "async function* hi\n\tyield 3"
+    TemplateFunctionStatement: => "function hi<T extends number>(): T { return 1 as T }" becomes "function hi<T extends number>: T\n\treturn 1 as T"
+
+    FunctionExpressionNoop: => "const x = function(){}" becomes "x := function: void"
+    FunctionExpression: => "const x = function() { return 3 }" becomes "x := function\n\treturn 3"
+    GeneratorFunctionExpression: => "const x = function*() { yield 3 }" becomes "x := function*\n\tyield 3"
+    AsyncFunctionExpression: => "const x = async function() { return 3 }" becomes "x := async function\n\treturn 3"
+    AsyncGeneratorFunctionExpression: => "const x = async function*() { yield 3 }" becomes "x := async function*\n\tyield 3"
+
     ConstructorDeclaration: => "class X { constructor() {} }" becomes "class X\n\t@()"
     MethodDeclaration: => "class X { method() {} }" becomes "class X\n\tmethod(): void"
-    MethodSignature: => "class X { method(): void }" becomes "class X\n\tmethod(): void"
+    GeneratorMethodDeclaration: => "class X { *method() {} }" becomes "class X\n\t*method()"
+    OptionalMethodDeclaration: => "class X { method?() {} }" becomes "class X\n\tmethod?(): void"
+    MethodSignatureClass: => "class X { method(): void }" becomes "class X\n\tmethod(): void"
+    MethodSignature: => "interface X { method(): void }" becomes "interface X\n\tmethod(): void"
     GetAccessor: => "class X { get getter() {} }" becomes "class X\n\tget getter(): void"
     SetAccessor: => "class X { set setter() {} }" becomes "class X\n\tset setter(): void"
     LambdaExpression: => "const x = () => 3" becomes "x := => 3"
@@ -18,3 +32,8 @@ export tests: Tests :=
     ConstructorType: => "const x: new () => void" becomes "const x: new => void"
     InterfaceCallSignature: => "interface X { (): void }" becomes "interface X\n\t(): void"
     InterfaceConstructSignature: => "interface X { new (): void }" becomes "interface X\n\tnew (): void"
+
+    AutoVoid: => "function hi() { 123 }" becomes "function hi: void\n\t123"
+    AutoVoidEmptyReturn: => "function hi() { return }" becomes "function hi: void\n\treturn"
+    AutoVoidNotTriggeredByChildren: => "function hi() { function child(){ return 123 } }" becomes "function hi: void\n\tfunction child\n\t\treturn 123"
+

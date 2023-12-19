@@ -1,0 +1,59 @@
+{ operator becomes, operator becomesUnchecked, operator contains, type Tests, type Options } from ./_utils.civet
+
+export options: Options := {}
+
+export tests: Tests :=
+    Indexed: =>
+        "for(let i = 0; i < 10; i++) { 123 }" becomes "for i .= 0; i < 10; i++\n\t123"
+    Indexed_Multiple: =>
+        "for(let i = 0, j = 0; i < 10; i++) { 123 }" becomes "for let i = 0, j = 0; i < 10; i++\n\t123"
+    ForIn: =>
+        "for(const key in object) { 123 }" becomes "for key in object\n\t123"
+    ForOf: =>
+        "for(const value of array) { 123 }" becomes "for value of array\n\t123"
+    ForOf_Async: =>
+        "for await(const value of array) { 123 }" becomes "for await value of array\n\t123"
+
+    While: =>
+        "while(condition) { 123 }" becomes "while condition\n\t123"
+    DoWhile: =>
+        "do { 123 } while(condition)" becomes "do\n\t123\nwhile condition"
+
+    SwitchWhen: =>
+        "switch(value) { case 1: 123; break; default: break; }" becomes "switch value\n\twhen 1:\n\t\t123\n\tdefault:\n\t\tbreak"
+        "switch(value) { case 1: { break; } default: break; }" becomes "switch value\n\twhen 1:\n\tdefault:\n\t\tbreak"
+
+    SwitchNoWhen: =>
+        "switch(value) { case 1: default: break; }" becomes "switch value\n\tcase 1:\n\tdefault:\n\t\tbreak"
+
+    Break: =>
+        "break" becomes "break"
+        "break label" becomes "break label"
+
+    Continue: =>
+        "continue" becomes "continue"
+        "continue label" becomes "continue label"
+
+    If: =>
+        "if(condition) { 123 }" becomes "if condition\n\t123"
+    If_Else: =>
+        "if(condition) { 123 } else { 321 }" becomes "if condition\n\t123\nelse\n\t321"
+    If_ElseIf: =>
+        "if(a) { 123 } else if(b) { 321 } else { 132 }" becomes "if a\n\t123\nelse if b\n\t321\nelse\n\t132"
+
+    With: =>
+        "with(object) { 123 }" becomesUnchecked "with object\n\t123" // https://github.com/DanielXMoore/Civet/issues/881
+
+    Try: =>
+        "try { 123 }" becomes "try\n\t123"
+    Try_Catch: =>
+        "try { 123 } catch(error) { 321 }" becomes "try\n\t123\ncatch error\n\t321"
+        "try { 123 } catch { 321 }" becomes "try\n\t123\ncatch\n\t321"
+    Try_Finally: =>
+        "try { 123 } finally { 321 }" becomes "try\n\t123\nfinally\n\t321"
+    Try_Catch_Finally: =>
+        "try { 123 } catch(error) { 321 } finally { 213 }" becomes "try\n\t123\ncatch error\n\t321\nfinally\n\t213"
+        "try { 123 } catch { 321 } finally { 213 }" becomes "try\n\t123\ncatch\n\t321\nfinally\n\t213"
+
+    Throw: =>
+        "throw error" becomes "throw error"

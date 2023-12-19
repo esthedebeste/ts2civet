@@ -1,5 +1,7 @@
+/// <reference types="@danielx/civet/dist/types.d.ts" />
 { transform, type Options as OrigOptions } from ../src/transform.civet
-{ operator equal, ok: assert } from node:assert/strict
+{ operator equal, ok: assert, doesNotThrow } from node:assert/strict
+* as civet from @danielx/civet
 
 export interface Options extends OrigOptions
     filename?: string
@@ -10,8 +12,16 @@ export options: Options .= { ...defaultOpts }
 function transforms(source: string)
     transform source, options.filename ?? "./code.tsx", { -header, ...options }
 
-export operator becomes(source: string, output: string)
+export operator becomesUnchecked(source: string, output: string)
     transforms source |> &.trim() equal output.trim()
+
+export operator becomes(source: string, output: string)
+    try
+        civet.parse output
+    catch e
+        equal output, "any valid civet code", "TEST FAULT: Expected output is not valid civet code"
+    source becomesUnchecked output
+
 
 export operator contains(source: string, output: string)
     transformed := transforms source
