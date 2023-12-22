@@ -2,7 +2,7 @@
 type { Options } from code-block-writer
 CodeBlockWriter := cbw.default as never as typeof import("code-block-writer").default
 ts from typescript
-{ SyntaxKind, NodeFlags, idText, tokenToString, forEachLeadingCommentRange, forEachTrailingCommentRange, isArrayLiteralExpression, isCallExpression, isExpression, isToken, isDefaultClause, isBlock, isFunctionLike } := ts
+{ SyntaxKind, NodeFlags, idText, tokenToString, forEachLeadingCommentRange, forEachTrailingCommentRange, isArrayLiteralExpression, isCallExpression, isExpression, isToken, isDefaultClause, isBlock, isFunctionLike, isBinaryExpression, isObjectLiteralExpression } := ts
 type { ModifierLike, Node, Statement, NodeArray, Identifier, QualifiedName, ComputedPropertyName, PrivateIdentifier, Decorator, TypeParameterDeclaration, SignatureDeclaration, CallSignatureDeclaration, ConstructSignatureDeclaration, VariableDeclaration, VariableDeclarationList, ParameterDeclaration, BindingElement, PropertySignature, PropertyDeclaration, PropertyAssignment, ShorthandPropertyAssignment, SpreadAssignment, ObjectBindingPattern, ArrayBindingPattern, FunctionLikeDeclaration, FunctionDeclaration, MethodSignature, MethodDeclaration, ConstructorDeclaration, SemicolonClassElement, GetAccessorDeclaration, SetAccessorDeclaration, IndexSignatureDeclaration, ClassStaticBlockDeclaration, ImportTypeAssertionContainer, ImportTypeNode, ThisTypeNode, FunctionOrConstructorTypeNodeBase, FunctionTypeNode, ConstructorTypeNode, TypeReferenceNode, TypePredicateNode, TypeQueryNode, TypeLiteralNode, ArrayTypeNode, TupleTypeNode, NamedTupleMember, OptionalTypeNode, RestTypeNode, UnionTypeNode, IntersectionTypeNode, ConditionalTypeNode, InferTypeNode, ParenthesizedTypeNode, TypeOperatorNode, IndexedAccessTypeNode, MappedTypeNode, LiteralTypeNode, StringLiteral, TemplateLiteralTypeNode, TemplateLiteralTypeSpan, OmittedExpression, PartiallyEmittedExpression, PrefixUnaryExpression, PostfixUnaryExpression, NullLiteral, TrueLiteral, FalseLiteral, ThisExpression, SuperExpression, ImportExpression, DeleteExpression, TypeOfExpression, VoidExpression, AwaitExpression, YieldExpression, SyntheticExpression, BinaryExpression, ConditionalExpression, FunctionExpression, ArrowFunction, RegularExpressionLiteral, NoSubstitutionTemplateLiteral, NumericLiteral, BigIntLiteral, TemplateHead, TemplateMiddle, TemplateTail, TemplateExpression, TemplateSpan, ParenthesizedExpression, ArrayLiteralExpression, SpreadElement, ObjectLiteralExpression, PropertyAccessExpression, ElementAccessExpression, CallExpression, ExpressionWithTypeArguments, NewExpression, TaggedTemplateExpression, AsExpression, TypeAssertion, SatisfiesExpression, NonNullExpression, MetaProperty, JsxElement, JsxAttributes, JsxNamespacedName, JsxOpeningElement, JsxSelfClosingElement, JsxFragment, JsxOpeningFragment, JsxClosingFragment, JsxAttribute, JsxSpreadAttribute, JsxClosingElement, JsxExpression, JsxText, NotEmittedStatement, CommaListExpression, EmptyStatement, DebuggerStatement, MissingDeclaration, Block, VariableStatement, ExpressionStatement, IfStatement, DoStatement, WhileStatement, ForStatement, ForInStatement, ForOfStatement, BreakStatement, ContinueStatement, ReturnStatement, WithStatement, SwitchStatement, CaseBlock, CaseClause, DefaultClause, LabeledStatement, ThrowStatement, TryStatement, CatchClause, ClassLikeDeclaration, ClassDeclaration, ClassExpression, InterfaceDeclaration, HeritageClause, TypeAliasDeclaration, EnumMember, EnumDeclaration, ModuleDeclaration, ModuleBlock, ImportEqualsDeclaration, ExternalModuleReference, ImportDeclaration, ImportClause, AssertEntry, AssertClause, NamespaceImport, NamespaceExport, NamespaceExportDeclaration, ExportDeclaration, NamedImports, NamedExports, ImportSpecifier, ExportSpecifier, ExportAssignment, JSDocTypeExpression, JSDocNameReference, JSDocMemberName, JSDocAllType, JSDocUnknownType, JSDocNonNullableType, JSDocNullableType, JSDocOptionalType, JSDocFunctionType, JSDocVariadicType, JSDocNamepathType, JSDoc, JSDocLink, JSDocLinkCode, JSDocLinkPlain, JSDocText, JSDocUnknownTag, JSDocAugmentsTag, JSDocImplementsTag, JSDocAuthorTag, JSDocDeprecatedTag, JSDocClassTag, JSDocPublicTag, JSDocPrivateTag, JSDocProtectedTag, JSDocReadonlyTag, JSDocOverrideTag, JSDocEnumTag, JSDocThisTag, JSDocTemplateTag, JSDocSeeTag, JSDocReturnTag, JSDocTypeTag, JSDocTypedefTag, JSDocCallbackTag, JSDocOverloadTag, JSDocThrowsTag, JSDocSignature, JSDocPropertyTag, JSDocParameterTag, JSDocTypeLiteral, JSDocSatisfiesTag, SourceFile, Bundle, InputFiles, UnparsedSource, UnparsedPrologue, UnparsedPrepend, UnparsedTextLike, UnparsedSyntheticReference, JsonMinusNumericLiteral, SyntaxList } from typescript
 { StringLiteralType, stringLiteral } from ./utils.civet
 
@@ -93,6 +93,9 @@ export class Emitter < CodeBlockWriter
         @node right
 
     [SyntaxKind.ComputedPropertyName](node: ComputedPropertyName): void
+        if node.expression.kind is SyntaxKind.TemplateExpression
+            @node node.expression
+            return
         @write "["
         @node node.expression
         @write "]"
@@ -636,10 +639,12 @@ export class Emitter < CodeBlockWriter
         multiline := isMultiline node
         if multiline
             @write "["
-            @indent : void =>
-                for element of node.elements
+            for element, index of node.elements
+                @indent : void =>
                     @node element
-                    @nl()
+                @nl()
+                if index < node.elements.length - 1 and isObjectLiteralExpression(element) and @braceless element
+                    @write ","
             @write "]"
         else
             @write "["
@@ -650,14 +655,18 @@ export class Emitter < CodeBlockWriter
         @write "..."
         @node node.expression
 
-    [SyntaxKind.ObjectLiteralExpression](node: ObjectLiteralExpression): void
-        braceless := node.parent.kind is not SyntaxKind.BinaryExpression
+    braceless(node: ObjectLiteralExpression)
+        (!isBinaryExpression(node.parent) or node.parent.operatorToken.kind is SyntaxKind.EqualsToken)
+            and !(isArrayLiteralExpression(node.parent) and !isMultiline(node.parent))
             and node.properties.length > 0
             and node.properties.every (prop) => prop.kind is SyntaxKind.PropertyAssignment
             and prop.name.kind is SyntaxKind.Identifier
-        unless braceless
-            @write "{"
+
+    [SyntaxKind.ObjectLiteralExpression](node: ObjectLiteralExpression): void
         multiline := isMultiline node
+        braceless := @braceless node
+        unless braceless
+            @write if multiline or node.properties.length is 0 then "{" else "{ "
         if multiline
             @indent : void =>
                 for property of node.properties
@@ -665,10 +674,8 @@ export class Emitter < CodeBlockWriter
                     @nl()
         else
             @nodeArray node.properties
-        if braceless
-            @write "," if isArrayLiteralExpression(node.parent) and node.parent.elements.-1 is not node
-        else
-            @write "}"
+        unless braceless
+            @write if multiline or node.properties.length is 0 then "}" else " }"
 
     [SyntaxKind.PropertyAccessExpression](node: PropertyAccessExpression): void
         if node.expression.kind is SyntaxKind.ThisKeyword and node.questionDotToken == null

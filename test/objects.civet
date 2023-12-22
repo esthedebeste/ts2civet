@@ -1,0 +1,13 @@
+{ operator becomes, operator exprBecomes, type Tests, type Options } from ./_utils.civet
+
+export options: Options := {}
+
+export tests: Tests :=
+    Empty: => "{}" exprBecomes "{}"
+    Unbrace: => "{ number: 3 }" exprBecomes "number: 3"
+    Brace: => "{ number }" exprBecomes "{ number }"
+    Multiline: => "{\n\tnumber: 3\n}" exprBecomes "\n\tnumber: 3"
+    InArray: =>
+        "[{ a: 1 }]" exprBecomes "[{ a: 1 }]"
+        "[{ a: 1 }, { b: 2 }]" exprBecomes "[{ a: 1 }, { b: 2 }]"
+        "[\n\t{ a: 1 },\n\t{ b: 2 }\n]" exprBecomes "[\n\ta: 1\n,\n\tb: 2\n]"

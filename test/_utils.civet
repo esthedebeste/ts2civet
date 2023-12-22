@@ -22,6 +22,8 @@ export operator becomes(source: string, output: string)
         equal output, "any valid civet code", "TEST FAULT: Expected output is not valid civet code"
     source becomesUnchecked output
 
+export operator exprBecomes(source: string, output: string)
+    ("_ = " + source) becomes ("_ = " + output)
 
 export operator contains(source: string, output: string)
     transformed := transforms source
