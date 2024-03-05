@@ -9,13 +9,13 @@ files := await glob "./**/*.civet", dotRelative: true, cwd: dirname fileURLToPat
 for file of files
     console.log `Importing ${file}`
     parsed := parse file
-    unless parsed.base.startsWith '_'
-        { tests, options } := await import file
-        describe file, =>
-            for name in tests
-                it name.replaceAll("_", " "), =>
-                    if name.startsWith "TODO"
-                        return
-                    setOptions options
-                    await tests[name]()
-            return
+    continue if parsed.base.startsWith '_'
+    { tests, options } := await import file
+    describe file, =>
+        for name in tests
+            it name.replaceAll("_", " "), =>
+                if name.startsWith "TODO"
+                    return
+                setOptions options
+                await tests[name]()
+        return

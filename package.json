@@ -10,12 +10,11 @@
 	"exports": {
 		"import": "./dist/transform.js"
 	},
-	"types": "./dist/transform.d.ts",
+	"types": "./dist/transform.civet.d.ts",
 	"scripts": {
-		"build": "civet ./build.civet",
-		"prepare": "civet ./build.civet",
-		"start": "civet ./build.civet --dev && node ./dist/cli.js",
-		"verify": "civet ./build.civet --dev && node ./dist/cli.js --no-header ./verify/pre.tsx -o ./verify/emit.civet && civet -c ./verify/emit.civet -o ./verify/check.tsx && civet ./scripts/ts-ast.civet ./verify/pre.tsx ./verify/check.tsx && diff ./verify/pre.tsx.json ./verify/check.tsx.json > ./verify/ast-diff.json.diff && echo && echo Same AST!",
+		"build": "rollup --config rollup.config.civet --configPlugin @danielx/civet/rollup",
+		"prepare": "pnpm build",
+		"start": "node --loader @danielx/civet/esm ./src/cli.civet",
 		"test": "c8 node --loader @danielx/civet/esm --test test/_run.civet"
 	},
 	"keywords": [
@@ -27,15 +26,16 @@
 	"dependencies": {
 		"code-block-writer": "^12.0.0",
 		"glob": "^10.3.10",
-		"meow": "^12.1.1",
+		"meow": "^13.2.0",
 		"typescript": "^5.3.3"
 	},
 	"devDependencies": {
-		"@danielx/civet": "^0.6.59",
-		"@types/node": "^20.10.5",
+		"@danielx/civet": "^0.6.83",
+		"@types/node": "^20.11.24",
 		"@types/prettier": "^3.0.0",
-		"c8": "^8.0.1",
-		"prettier": "^3.1.1"
+		"c8": "^9.1.0",
+		"prettier": "^3.2.5",
+		"rollup": "^4.12.0"
 	},
 	"files": [
 		"dist"

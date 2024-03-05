@@ -1,0 +1,23 @@
+civetRollupPlugin from @danielx/civet/dist/rollup.mjs
+type { RollupOptions } from rollup
+{ globSync } from glob
+{ fileURLToPath } from url
+path from node:path
+
+export default {
+	input: globSync "src/**/*.civet"
+			|> .map (file) => {
+					[path.relative 'src', file.slice(0, file.length - path.extname(file).length)]: fileURLToPath new URL file, import.meta.url
+				}
+			|> .reduce ((a, b) => {...a,...b}), {}
+	output:
+		dir: "dist"
+		format: "esm"
+	plugins: [
+		civetRollupPlugin
+			emitDeclaration: true
+			ts: "tsc"
+			typecheck: true
+			implicitExtension: true
+	]
+} satisfies RollupOptions

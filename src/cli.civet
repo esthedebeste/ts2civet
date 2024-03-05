@@ -27,6 +27,7 @@ cli := meow """
        > Transformed src/b.ts to src/b.civet
        > console.log "Hello, world!"
 """,
+    // @ts-ignore -- civet rollup bug i think
     importMeta: import.meta,
     flags:
         help:

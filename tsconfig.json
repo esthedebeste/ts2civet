@@ -10,10 +10,8 @@
 		"allowSyntheticDefaultImports": true,
 		"jsx": "preserve",
 		"esModuleInterop": false,
-		"rootDir": "./dist/ts",
+		"rootDir": "./src",
 		"outDir": "./dist",
-		"resolvePackageJsonExports": true,
-	},
-	"include": ["./dist/ts/**/*.ts", "./src/**/*.civet"],
-	"exclude": ["./dist/**/*.js"]
+		"resolvePackageJsonExports": true
+	}
 }
