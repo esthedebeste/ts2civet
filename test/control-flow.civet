@@ -20,11 +20,17 @@ export tests: Tests :=
         "do { 123 } while(condition)" becomes "do\n\t123\nwhile condition"
 
     SwitchWhen: =>
-        "switch(value) { case 1: 123; break; default: break; }" becomes "switch value\n\twhen 1:\n\t\t123\n\tdefault:\n\t\tbreak"
-        "switch(value) { case 1: { break; } default: break; }" becomes "switch value\n\twhen 1:\n\tdefault:\n\t\tbreak"
+        "switch(value) { case 1: 123; break; default: break; }" becomes "switch value\n\twhen 1\n\t\t123\n\telse"
+        "switch(value) { case 1: { break; } default: break; }" becomes "switch value\n\twhen 1\n\telse"
 
     SwitchNoWhen: =>
-        "switch(value) { case 1: default: break; }" becomes "switch value\n\tcase 1:\n\tdefault:\n\t\tbreak"
+        "switch(value) { case 1: default: break; }" becomes "switch value\n\tcase 1:\n\telse"
+
+    SwitchElse: =>
+        "switch(value) { default: break; }" becomes "switch value\n\telse"
+
+    SwitchNoElse: =>
+        "switch(value) { default: }" becomes "switch value\n\tdefault:"
 
     Break: =>
         "break" becomes "break"
