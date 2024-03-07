@@ -1,5 +1,6 @@
 civetRollupPlugin from @danielx/civet/dist/rollup.mjs
 type { RollupOptions } from rollup
+pkg from ./package.json assert type: "json"
 
 export default {
 	input:
@@ -16,4 +17,5 @@ export default {
 			implicitExtension: true
 
 	]
+	external: [/^node\:/, ...Object.keys pkg.dependencies]
 } satisfies RollupOptions
