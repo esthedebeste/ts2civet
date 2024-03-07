@@ -1,6 +1,6 @@
 {
 	"name": "ts2civet",
-	"version": "1.0.0-beta.8",
+	"version": "1.0.0-beta.9",
 	"description": "Converts typescript code to civet code",
 	"main": "dist/cli.js",
 	"bin": {
@@ -8,7 +8,8 @@
 	},
 	"repository": "github:esthedebeste/ts2civet",
 	"exports": {
-		"import": "./dist/transform.js"
+		"import": "./dist/transform.js",
+		"types": "./dist/transform.civet.d.ts"
 	},
 	"types": "./dist/transform.civet.d.ts",
 	"scripts": {
