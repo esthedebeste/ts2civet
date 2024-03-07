@@ -2,7 +2,7 @@
 type { Options } from code-block-writer
 CodeBlockWriter := cbw.default as never as typeof import("code-block-writer").default
 ts from typescript
-{ SyntaxKind, NodeFlags, idText, tokenToString, forEachLeadingCommentRange, forEachTrailingCommentRange, isArrayLiteralExpression, isCallExpression, isExpression, isToken, isDefaultClause, isBlock, isFunctionLike, isBinaryExpression, isObjectLiteralExpression } := ts
+{ isParenthesizedExpression, isTypeOfExpression, SyntaxKind, NodeFlags, idText, tokenToString, forEachLeadingCommentRange, forEachTrailingCommentRange, isArrayLiteralExpression, isCallExpression, isExpression, isToken, isDefaultClause, isBlock, isFunctionLike, isBinaryExpression, isObjectLiteralExpression } := ts
 type { ModifierLike, Node, Statement, NodeArray, Identifier, QualifiedName, ComputedPropertyName, PrivateIdentifier, Decorator, TypeParameterDeclaration, SignatureDeclaration, CallSignatureDeclaration, ConstructSignatureDeclaration, VariableDeclaration, VariableDeclarationList, ParameterDeclaration, BindingElement, PropertySignature, PropertyDeclaration, PropertyAssignment, ShorthandPropertyAssignment, SpreadAssignment, ObjectBindingPattern, ArrayBindingPattern, FunctionLikeDeclaration, FunctionDeclaration, MethodSignature, MethodDeclaration, ConstructorDeclaration, SemicolonClassElement, GetAccessorDeclaration, SetAccessorDeclaration, IndexSignatureDeclaration, ClassStaticBlockDeclaration, ImportTypeAssertionContainer, ImportTypeNode, ThisTypeNode, FunctionOrConstructorTypeNodeBase, FunctionTypeNode, ConstructorTypeNode, TypeReferenceNode, TypePredicateNode, TypeQueryNode, TypeLiteralNode, ArrayTypeNode, TupleTypeNode, NamedTupleMember, OptionalTypeNode, RestTypeNode, UnionTypeNode, IntersectionTypeNode, ConditionalTypeNode, InferTypeNode, ParenthesizedTypeNode, TypeOperatorNode, IndexedAccessTypeNode, MappedTypeNode, LiteralTypeNode, StringLiteral, TemplateLiteralTypeNode, TemplateLiteralTypeSpan, OmittedExpression, PartiallyEmittedExpression, PrefixUnaryExpression, PostfixUnaryExpression, NullLiteral, TrueLiteral, FalseLiteral, ThisExpression, SuperExpression, ImportExpression, DeleteExpression, TypeOfExpression, VoidExpression, AwaitExpression, YieldExpression, SyntheticExpression, BinaryExpression, ConditionalExpression, FunctionExpression, ArrowFunction, RegularExpressionLiteral, NoSubstitutionTemplateLiteral, NumericLiteral, BigIntLiteral, TemplateHead, TemplateMiddle, TemplateTail, TemplateExpression, TemplateSpan, ParenthesizedExpression, ArrayLiteralExpression, SpreadElement, ObjectLiteralExpression, PropertyAccessExpression, ElementAccessExpression, CallExpression, ExpressionWithTypeArguments, NewExpression, TaggedTemplateExpression, AsExpression, TypeAssertion, SatisfiesExpression, NonNullExpression, MetaProperty, JsxElement, JsxAttributes, JsxNamespacedName, JsxOpeningElement, JsxSelfClosingElement, JsxFragment, JsxOpeningFragment, JsxClosingFragment, JsxAttribute, JsxSpreadAttribute, JsxClosingElement, JsxExpression, JsxText, NotEmittedStatement, CommaListExpression, EmptyStatement, DebuggerStatement, MissingDeclaration, Block, VariableStatement, ExpressionStatement, IfStatement, DoStatement, WhileStatement, ForStatement, ForInStatement, ForOfStatement, BreakStatement, ContinueStatement, ReturnStatement, WithStatement, SwitchStatement, CaseBlock, CaseClause, DefaultClause, LabeledStatement, ThrowStatement, TryStatement, CatchClause, ClassLikeDeclaration, ClassDeclaration, ClassExpression, InterfaceDeclaration, HeritageClause, TypeAliasDeclaration, EnumMember, EnumDeclaration, ModuleDeclaration, ModuleBlock, ImportEqualsDeclaration, ExternalModuleReference, ImportDeclaration, ImportClause, AssertEntry, AssertClause, NamespaceImport, NamespaceExport, NamespaceExportDeclaration, ExportDeclaration, NamedImports, NamedExports, ImportSpecifier, ExportSpecifier, ExportAssignment, JSDocTypeExpression, JSDocNameReference, JSDocMemberName, JSDocAllType, JSDocUnknownType, JSDocNonNullableType, JSDocNullableType, JSDocOptionalType, JSDocFunctionType, JSDocVariadicType, JSDocNamepathType, JSDoc, JSDocLink, JSDocLinkCode, JSDocLinkPlain, JSDocText, JSDocUnknownTag, JSDocAugmentsTag, JSDocImplementsTag, JSDocAuthorTag, JSDocDeprecatedTag, JSDocClassTag, JSDocPublicTag, JSDocPrivateTag, JSDocProtectedTag, JSDocReadonlyTag, JSDocOverrideTag, JSDocEnumTag, JSDocThisTag, JSDocTemplateTag, JSDocSeeTag, JSDocReturnTag, JSDocTypeTag, JSDocTypedefTag, JSDocCallbackTag, JSDocOverloadTag, JSDocThrowsTag, JSDocSignature, JSDocPropertyTag, JSDocParameterTag, JSDocTypeLiteral, JSDocSatisfiesTag, SourceFile, Bundle, InputFiles, UnparsedSource, UnparsedPrologue, UnparsedPrepend, UnparsedTextLike, UnparsedSyntheticReference, JsonMinusNumericLiteral, SyntaxList } from typescript
 { StringLiteralType, stringLiteral } from ./utils.civet
 
@@ -522,6 +522,12 @@ export class Emitter < CodeBlockWriter
         TODO node
 
     [SyntaxKind.PrefixUnaryExpression](node: PrefixUnaryExpression): void
+        // !(a instanceof b) => a !<? b
+        if node.operator is SyntaxKind.ExclamationToken and isParenthesizedExpression(node.operand) && isBinaryExpression(node.operand.expression) and node.operand.expression.operatorToken.kind is SyntaxKind.InstanceOfKeyword
+            @node node.operand.expression.left
+            @write " !<? "
+            @node node.operand.expression.right
+            return
         @write keyword node.operator
         @node node.operand
 
@@ -573,7 +579,23 @@ export class Emitter < CodeBlockWriter
     [SyntaxKind.SyntheticExpression](node: SyntheticExpression): void
         TODO node
 
+    [SyntaxKind.InstanceOfKeyword](_: Node)
+        @write "<?"
+
     [SyntaxKind.BinaryExpression](node: BinaryExpression): void
+        notEquals := node.operatorToken.kind is in [SyntaxKind.ExclamationEqualsEqualsToken, SyntaxKind.ExclamationEqualsToken]
+        if notEquals or node.operatorToken.kind is in [SyntaxKind.EqualsEqualsToken, SyntaxKind.EqualsEqualsEqualsToken]
+            if node.left.kind is SyntaxKind.StringLiteral and isTypeOfExpression node.right
+                @node node.right.expression
+                @write if notEquals then " !<? " else " <? "
+                @node node.left
+                return
+            else if node.right.kind is SyntaxKind.StringLiteral and isTypeOfExpression node.left
+                @node node.left.expression
+                @write if notEquals then " !<? " else " <? "
+                @node node.right
+                return
+
         @node node.left
         @write " "
         @node node.operatorToken

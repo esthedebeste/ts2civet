@@ -1,0 +1,10 @@
+{ operator becomes, operator contains, type Tests, type Options } from ./_utils.civet
+
+export options: Options := {}
+
+export tests: Tests :=
+    Instanceof: => "a instanceof b" becomes "a <? b"
+    NotInstanceof: => "!(a instanceof b)" becomes "a !<? b"
+
+    TypeOf: => "typeof a === 'b'" becomes "a <? 'b'"
+    NotTypeOf: => "typeof a !== 'b'" becomes "a !<? 'b'"
