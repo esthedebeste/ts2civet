@@ -363,7 +363,7 @@ export class Emitter < CodeBlockWriter
         @functionLikeDeclaration node
 
     [SyntaxKind.SemicolonClassElement](node: SemicolonClassElement): void
-        TODO node // ???
+        @nl()
 
     [SyntaxKind.GetAccessor](node: GetAccessorDeclaration): void
         @write "get "
@@ -374,8 +374,10 @@ export class Emitter < CodeBlockWriter
         @functionLikeDeclaration node
 
     [SyntaxKind.IndexSignature](node: IndexSignatureDeclaration): void
-        TODO node // ???
-        throw new Error "unsure what IndexSignatureDeclaration is"
+        @write "["
+        @nodeArray node.parameters
+        @write "]: "
+        @node node.type
 
     [SyntaxKind.ClassStaticBlockDeclaration](node: ClassStaticBlockDeclaration): void
         @write "static "

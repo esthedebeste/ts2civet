@@ -1,0 +1,6 @@
+{ operator becomes, operator contains, type Tests, type Options } from ./_utils.civet
+
+export options: Options := {}
+
+export tests: Tests :=
+    Index_Signature: => "interface X { [indexSignature: string]: number }" becomes "interface X\n\t[indexSignature: string]: number"
