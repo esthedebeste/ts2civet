@@ -4,4 +4,4 @@ export options: Options := {}
 
 export tests: Tests :=
     Inline_Around: => "/* 1 */hey/* 2 */" becomes " /* 1 */\nhey /* 2 */\n"
-    TODO_Line_Around: => "// 1\nhey\n// 2" becomes " // 1\nhey\n// 2"
+    Line_Around: => "// 1\nhey\n// 2" becomes " // 1\nhey\n// 2"
