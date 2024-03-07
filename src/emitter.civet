@@ -1215,6 +1215,9 @@ export class Emitter < CodeBlockWriter
             @write "import "
 
         @moduleSpecifier node.moduleSpecifier
+        if node.attributes?
+            @write " "
+            @node node.attributes
         @nl()
 
     [SyntaxKind.ImportClause](node: ImportClause): void
@@ -1272,18 +1275,14 @@ export class Emitter < CodeBlockWriter
             @write " from "
             @moduleSpecifier node.moduleSpecifier
 
-        if node.assertClause?
+        if node.attributes?
             @write " "
-            @node node.assertClause
+            @node node.attributes
         @nl()
 
     [SyntaxKind.NamedImports](node: NamedImports): void
         @write "{ "
-        if node.elements.length > 0
-            @node node.elements[0]
-        for element of node.elements[1..]
-            @write ", "
-            @node element
+        @nodeArray node.elements
         @write " }"
 
     [SyntaxKind.NamedExports](node: NamedExports): void
@@ -1300,6 +1299,9 @@ export class Emitter < CodeBlockWriter
     [SyntaxKind.ExportSpecifier](node: ExportSpecifier): void
         if node.propertyName?
             @node node.propertyName
+            if node.parent.parent.moduleSpecifier?
+                @write ": "
+            else
             @write " as " // can't be :, `export x: b` => `export var x: b`
         @node node.name
 

@@ -1,12 +1,22 @@
-{ operator becomes, operator contains, type Tests, type Options } from ./_utils.civet
+{ operator becomes, operator becomesUnchecked, operator contains, type Tests, type Options } from ./_utils.civet
 
 export options: Options := {}
 export tests: Tests :=
-    Bald:        => "import './stuff'" becomes "import ./stuff\n"
-    Default:     => "import s from './stuff'" becomes "s from ./stuff\n"
-    Named:       => "import { s } from './stuff'" becomes "{ s } from ./stuff\n"
-    NamedAs:     => "import { s as t } from './stuff'" becomes "{ s: t } from ./stuff\n"
-    Namespace:   => "import * as s from './stuff'" becomes "* as s from ./stuff\n"
-    TypeGroup:   => "import type { s } from './stuff'" becomes "type { s } from ./stuff\n"
-    TypeGroupAs: => "import type { s as t } from './stuff'" becomes "type { s: t } from ./stuff\n"
-    Mixed:       => "import s, { t as u, type f as k } from './stuff'" becomes "s, { t: u, type f: k } from ./stuff\n"
+    ImportBald:        => "import './stuff'" becomes "import ./stuff\n"
+    ImportDefault:     => "import s from './stuff'" becomes "s from ./stuff\n"
+    ImportNamed:       => "import { s } from './stuff'" becomes "{ s } from ./stuff\n"
+    ImportNamedAs:     => "import { s as t } from './stuff'" becomes "{ s: t } from ./stuff\n"
+    ImportNamespace:   => "import * as s from './stuff'" becomes "* as s from ./stuff\n"
+    ImportTypeGroup:   => "import type { s } from './stuff'" becomes "type { s } from ./stuff\n"
+    ImportTypeGroupAs: => "import type { s as t } from './stuff'" becomes "type { s: t } from ./stuff\n"
+    ImportMixed:       => "import s, { t as u, type f as k } from './stuff'" becomes "s, { t: u, type f: k } from ./stuff\n"
+    ImportWith:  => "import { s } from './stuff' with { type: 'json' }" becomes "{ s } from ./stuff with type: 'json'\n"
+
+    ExportFrom:  => "export { s } from './stuff'" becomes "export s from ./stuff\n"
+    ExportAll:   => "export * from './stuff'" becomes "export * from ./stuff\n"
+    ExportAs:    => "export { s as t }" becomes "export s as t\n"
+    // TODO: replace this `becomesUnchecked` once this issue is solved https://github.com/DanielXMoore/Civet/issues/1092
+    ExportFromAs:    => "export { s as t } from './stuff'" becomesUnchecked "export s: t from ./stuff\n"
+    ExportFromType:  => "export type { s } from './stuff'" becomes "export type s from ./stuff\n"
+    // TODO: replace this `becomesUnchecked` once this issue is solved https://github.com/DanielXMoore/Civet/issues/1091
+    ExportFromWith:  => "export { s } from './stuff' with { type: 'json' }" becomesUnchecked "export s from ./stuff with type: 'json'\n"
