@@ -1138,13 +1138,12 @@ export class Emitter < CodeBlockWriter
     [SyntaxKind.TypeAliasDeclaration](node: TypeAliasDeclaration): void
         if node.modifiers?
             @modifiers node.modifiers
-        @write "type "
         @node node.name
         if node.typeParameters?
             @write "<"
             @nodeArray node.typeParameters
             @write ">"
-        @write " = "
+        @write " ::= "
         @node node.type
         @nl()
 
@@ -1302,7 +1301,7 @@ export class Emitter < CodeBlockWriter
             if node.parent.parent.moduleSpecifier?
                 @write ": "
             else
-            @write " as " // can't be :, `export x: b` => `export var x: b`
+                @write " as " // can't be :, `export x: b` => `export var x: b`
         @node node.name
 
     [SyntaxKind.ExportAssignment](node: ExportAssignment): void
